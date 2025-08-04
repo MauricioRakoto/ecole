@@ -1,0 +1,110 @@
+
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-4 {
+    margin-top: 20px;
+}
+
+/* Header section */
+header {
+  
+    color: #121212;
+    padding: 20px;
+}
+
+#tete {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tetes img {
+    width: 100px;
+}
+
+.tetes p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.tetes span {
+    font-weight: bold;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+td {
+    background-color: #fff;
+}
+
+/* Footer and sections styling */
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.col-md-4 {
+    width: 30%;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Additional styles */
+.float-end {
+    float: right;
+}
+
+u {
+    text-decoration: underline;
+}
