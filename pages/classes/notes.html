@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+    <style>
+        table th:nth-child(1),
+        table td:nth-child(1) {
+            width: 50px;
+        }
+
+        table th:nth-child(2),
+        table td:nth-child(2) {
+            width: 1%;
+        }
+
+        table th:nth-child(3),
+        table td:nth-child(3) {
+            width: 35%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
+        <a  href="#" class="text-primary" style="display: flex; gap: 10px; align-items: center">
+            <img src="../../img/logo.png" alt="logo" style="width: 35px">
+            <h3 style="font-size: 20px">Students</h3>
+        </a>
+        <div class="menu">
+            <button class="btn-menu" id="menu">
+                M
+            </button>
+            <div class="menu-name">
+                <h4>Mauricio Stanic</h4>
+            </div>
+            <div class="menu-modal">
+                <div class="modal-top">
+                    <div class="tp-image">
+                        <div class="image">
+                            Image
+                        </div>
+                        
+                    </div>
+                    <div class="tp-name">
+                        <h4>Mauricio Stanic</h4>
+                    </div>
+                    <div class="tp-compte">
+                        <h4>Compte: Surveillant</h4>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <ul class="modal-links">
+                        <li>
+                            <a href="#">Mon profile</a>
+                        </li>
+                        <li>
+                            <a href="#">Paramètre</a>
+                        </li>
+                        <li>
+                            <a href="#">Se déconnecter</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
+        
+        <div class="sidebar" style="width: 200px; padding: 0 20px; " >
+            <nav class="navbar bg-light">
+                <div class="navbar-nav w-100" style="margin-top: 25px">
+                    <div class="nav-top">
+                        <div class="nav-l">
+                            <h3>Classe</h3>
+                        </div>
+                        <div class="nav-r">
+                            <a class="df-jc-ac" href="./index.html">X</a>
+                        </div>
+                    </div>
+                    <ul>
+                        <li>
+                            <a href="./eleves.html" class="nav-link">Eleves</a>
+                        </li>
+                        <li>
+                            <a href="./numbers.html" class="nav-link">Numéros</a>
+                        </li>
+                        <li>
+                            <a href="./absences.html" class="nav-link">Absences</a>
+                        </li>
+                        <li>
+                            <a href="./matieres.html" class="nav-link">Matières</a>
+                        </li>
+                        <li>
+                            <a href="./notes.html" class="nav-link active">Notes</a>
+                        </li>
+                        <li>
+                            <a href="./renvoyer.html" class="nav-link">Renvoyer</a>
+                        </li>
+                        <li>
+                            <a href="index.php" class="nav-link">Bulletins</a>
+                        </li>
+                    </ul>
+                    
+                    
+                </div>
+            </nav>
+        </div>
+        <div class="col-right">
+
+            <div class="tp">
+                <div class="add notes">
+                    <a href="./notes.html" class="btn-add active">Listes</a>
+                    <a href="./add-notes.html" class="btn-add">Nouveaux</a>
+                </div>
+                <div class="search">
+                    <form action="">
+                        <input type="text" placeholder="Rechercher">
+                        <button type="submit">Rechercher</button>
+                    </form>
+                    
+                </div>
+            </div>
+
+            <div class="col-classe-l" style="margin-top: 20px;">
+                <h1>Liste des notes dans la Classe: Exemple</h1>
+                <h3>Année Scolaire: 2025 - 2026</h3>
+                <h3>Salle: Exemple</h3>
+            </div>
+
+            <div class="periodes">
+                <div class="periode-name">
+                    <h3>Session d'examen</h3>
+                </div>
+                <div class="periodes-links">
+                    <a class="active" href="notes.html">1 Trimèstre</a>
+                    <a href="#">2 Trimèstre</a>
+                    <a href="#">3 Trimèstre</a>
+                </div>
+            </div>
+
+            <div class="periodes" style="margin-top: 20px;">
+                <div class="periode-name">
+                    <h3>Matières</h3>
+                </div>
+                <div class="periodes-links" >
+                    <a class="active" href="notes.html">Anglais</a>
+                    <a href="#">Français</a>
+                    <a href="#">Malagasy</a>
+                </div>
+            </div>
+
+            <div class="bd">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Matricule</th>
+                            <th scope="col">Nom & Prénom</th>
+                            <th scope="col">Sexe</th>
+                            <th scope="col">DS 1</th>
+                            <th scope="col">DS 2</th>
+                            <th scope="col">Examen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">
+                                1
+                            </th>
+                            <td>
+                                0164/24
+                            </td>
+                            <td>
+                                ANDRIAMANARIVO Olivier
+                            </td>
+                            <td>
+                                Garçon
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                1
+                            </th>
+                            <td>
+                                0164/24
+                            </td>
+                            <td>
+                                ANDRIAMANARIVO Olivier
+                            </td>
+                            <td>
+                                Garçon
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                1
+                            </th>
+                            <td>
+                                0164/24
+                            </td>
+                            <td>
+                                ANDRIAMANARIVO Olivier
+                            </td>
+                            <td>
+                                Garçon
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                1
+                            </th>
+                            <td>
+                                0164/24
+                            </td>
+                            <td>
+                                ANDRIAMANARIVO Olivier
+                            </td>
+                            <td>
+                                Garçon
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                1
+                            </th>
+                            <td>
+                                0164/24
+                            </td>
+                            <td>
+                                ANDRIAMANARIVO Olivier
+                            </td>
+                            <td>
+                                Garçon
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                            <td>
+                                0
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+           
+        </div>
+    </div>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/main.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <style>
+        .parms {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .parms .col .p-ttl h3 {
+            font-size: 18px;
+        }
+
+        .parms .col .b-opt {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding-left: 15px;
+        }
+
+        .parms .col .b-opt .option {
+            display: flex;
+            gap: 10px;
+        }
+
+        .parms .col .b-opt .option button {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            background: none;
+            cursor: pointer;
+            transition: 1s ease-in-out;
+        }
+
+
+        .parms .col .b-opt .option button:hover,
+        .parms .col .b-opt .option button.active {
+            background: #009CFF;
+        }
+
+        .parms .col .b-opt .option h4 {
+            font-size: 14px;
+        }
+
+        .row-print {
+            position: relative;
+            width: 99%;
+            top: -90px;
+            left: 10px;
+        }
+
+        table th:nth-child(1),
+        table td:nth-child(1) {
+            width: 50px;
+        }
+
+        table th:nth-child(2),
+        table td:nth-child(2) {
+            width: 1%;
+        }
+
+        table th:nth-child(3),
+        table td:nth-child(3) {
+            width: 35%;
+        }
+
+        /* table td:nth-child(5) {
+            padding-right: 40px;
+        } */
+
+        table th:nth-child(5), 
+        table td:nth-child(5),
+        table th:nth-child(6), 
+        table td:nth-child(6),
+        table th:nth-child(7), 
+        table td:nth-child(7),
+        table th:nth-child(8), 
+        table td:nth-child(8),
+        table th:nth-child(9), 
+        table td:nth-child(9) {
+            display: none;
+            
+            transition: 1s ease-in-out;
+        }
+
+
+        table th:nth-child(5).show, 
+        table td:nth-child(5).show,
+        table th:nth-child(6).show, 
+        table td:nth-child(6).show,
+        table th:nth-child(7).show, 
+        table td:nth-child(7).show,
+        table th:nth-child(8).show, 
+        table td:nth-child(8).show,
+        table th:nth-child(9).show, 
+        table td:nth-child(9).show {
+            display: table-cell;
+        }
+
+        a.return {
+            background: #009CFF;
+            color: #000;
+        }
+
+        @media print {
+    .parms {
+        display: none;
+    }
+
+    a.return,
+    button.btn-print {
+        display: none;
+    }
+}
+
+
+    </style>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
+        <div class="row-print">
+            <div class="parms">
+                <div class="col">
+                    <div class="p-ttl">
+                        <h3>Affichages</h3>
+                    </div>
+                    <div class="b-opt">
+                        <div class="option">
+                            <button id="btnstatus"></button>
+                            <h4>Status</h4>
+                        </div>
+                        <div class="option">
+                            <button id="btndatebirth"></button>
+                            <h4>Date de naissance</h4>
+                        </div>
+                        <div class="option">
+                            <button id="btnnotes"></button>
+                            <h4>Notes</h4>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                <div class="col">
+                    <div class="p-ttl">
+                        <h3>Classements</h3>
+                    </div>
+                    <div class="b-opt">
+                        <div class="option">
+                            <button class="active" id="numberasc"></button>
+                            <h4>N° Ascendant</h4>
+                        </div>
+                        <div class="option">
+                            <button id="numberdsc"></button>
+                            <h4>N° Dscendant</h4>
+                        </div>
+                        <div class="option">
+                            <button id="nomasc"></button>
+                            <h4>Nom Ascendant</h4>
+                        </div>
+                        <div class="option">
+                            <button id="nomdsc"></button>
+                            <h4>Nom Dscendant</h4>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+            <div class="tp">
+                
+                <div class="col-classe-l">
+                    <h1>Liste des Eleves dans la Classe: Exemple</h1>
+                    <h3>Année Scolaire: 2025 - 2026</h3>
+                    <h3>Salle: Exemple</h3>
+                </div>
+            </div>
+            <div class="bd">
+                <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="col">#</th>
+                                <th class="col">Matricule</th>
+                                <th class="col">Nom & Prénom</th>
+                                <th class="col">Sexe</th>
+                                <th class="col">Date naissance</th>
+                                <th class="col">Status</th>
+                                <th class="col">DS 1</th>
+                                <th class="col">DS 2</th>
+                                <th class="col">Examen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">
+                                    1
+                                </th>
+                                <td>
+                                    0164/24
+                                </td>
+                                <td>
+                                    ANDRIAMANARIVO Olivier Mamy Lararivo
+                                </td>
+                                <td>
+                                    Garçon
+                                </td>
+                                <td>
+                                    21/06/2002
+                                </td>
+                                <td>
+                                    Passant
+                                </td>
+                                <td>
+                                    0
+                                </td>
+                                <td>
+                                    0
+                                </td>
+                                <td>
+                                    0
+                                </td>
+                            </tr>
+                           
+                           
+                        </tbody>
+                </table>
+                
+            </div>
+            <div class="bt" style="display: flex;
+            gap: 10px;">
+                <button class="btn btn-print" onclick="print()" style="background: #009CFF; 
+                width: 100px;
+                height: 35px;
+                color: #000;
+                ">Imprimer</button>
+                <a style="height: 35px;" href="./eleves.html" class="btn return">Retour</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const btnstatus = document.getElementById('btnstatus')
+        const btnDateBirth = document.getElementById("btndatebirth")
+        const btnNotes = document.getElementById('btnnotes')
+
+        const table = document.querySelector('table')
+        const dateBirth = table.querySelectorAll('th:nth-child(5), td:nth-child(5)')
+        const status = table.querySelectorAll('th:nth-child(6), td:nth-child(6)')
+        const ds1 = table.querySelectorAll('table th:nth-child(7), table td:nth-child(7)')
+        const ds2 = table.querySelectorAll('table th:nth-child(8), table td:nth-child(8)')
+        const exam = table.querySelectorAll('table th:nth-child(9), table td:nth-child(9)')
+
+        function toggleDateBirth () {
+            dateBirth.forEach(el => el.classList.toggle("show"))
+            btnDateBirth.classList.toggle('active')
+        }
+
+        function toggleStatus () {
+            status.forEach(el => el.classList.toggle("show"))
+            btnstatus.classList.toggle('active')
+        }
+
+        function toggleNotes () {
+            ds1.forEach(el => el.classList.toggle("show"))
+            ds2.forEach(el => el.classList.toggle("show"))
+            exam.forEach(el => el.classList.toggle("show"))
+            btnNotes.classList.toggle('active')
+        }
+        
+
+        btnDateBirth.addEventListener('click', toggleDateBirth)
+        btnstatus.addEventListener('click', toggleStatus)
+        btnNotes.addEventListener('click', toggleNotes)
+    </script>
+    <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
+    <style>
+        table th:nth-child(1),
+        table td:nth-child(1) {
+            width: 50px;
+        }
+
+        table th:nth-child(2),
+        table td:nth-child(2) {
+            width: 1%;
+        }
+
+        table th:nth-child(3),
+        table td:nth-child(3) {
+            width: 35%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
+        <a  href="#" class="text-primary" style="display: flex; gap: 10px; align-items: center">
+            <img src="../../img/logo.png" alt="logo" style="width: 35px">
+            <h3 style="font-size: 20px">Students</h3>
+        </a>
+        <div class="menu">
+            <button class="btn-menu" id="menu">
+                M
+            </button>
+            <div class="menu-name">
+                <h4>Mauricio Stanic</h4>
+            </div>
+            <div class="menu-modal">
+                <div class="modal-top">
+                    <div class="tp-image">
+                        <div class="image">
+                            Image
+                        </div>
+                        
+                    </div>
+                    <div class="tp-name">
+                        <h4>Mauricio Stanic</h4>
+                    </div>
+                    <div class="tp-compte">
+                        <h4>Compte: Surveillant</h4>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <ul class="modal-links">
+                        <li>
+                            <a href="#">Mon profile</a>
+                        </li>
+                        <li>
+                            <a href="#">Paramètre</a>
+                        </li>
+                        <li>
+                            <a href="#">Se déconnecter</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
+        
+        <div class="sidebar" style="width: 200px; padding: 0 20px; " >
+            <nav class="navbar bg-light">
+                <div class="navbar-nav w-100" style="margin-top: 25px">
+                    <div class="nav-top">
+                        <div class="nav-l">
+                            <h3>Classe</h3>
+                        </div>
+                        <div class="nav-r">
+                            <a class="df-jc-ac" href="./index.html">X</a>
+                        </div>
+                    </div>
+                    <ul>
+                        <li>
+                            <a href="./eleves.html" class="nav-link">Eleves</a>
+                        </li>
+                        <li>
+                            <a href="./numbers.html" class="nav-link">Numéros</a>
+                        </li>
+                        <li>
+                            <a href="./absences.html" class="nav-link">Absences</a>
+                        </li>
+                        <li>
+                            <a href="./matieres.html" class="nav-link">Matières</a>
+                        </li>
+                        <li>
+                            <a href="./notes.html" class="nav-link active">Notes</a>
+                        </li>
+                        <li>
+                            <a href="./renvoyer.html" class="nav-link">Renvoyer</a>
+                        </li>
+                        <li>
+                            <a href="index.php" class="nav-link">Bulletins</a>
+                        </li>
+                    </ul>
+                    
+                    
+                </div>
+            </nav>
+        </div>
+        <div class="col-right">
+
+            <div class="tp">
+                <div class="add notes">
+                    <a href="./notes.html" class="btn-add">Listes</a>
+                    <a href="./add-notes.html" class="btn-add active">Nouveaux</a>
+                </div>
+
+                <div class="search">
+                    <form action="">
+                        <input type="text" placeholder="Rechercher">
+                        <button type="submit">Rechercher</button>
+                    </form>
+                    
+                </div>
+            </div>
+
+            <div class="col-classe-l" style="margin-top: 20px;">
+                <h1>Ajouter des notes dans la Classe: Exemple</h1>
+                <h3>Année Scolaire: 2025 - 2026</h3>
+                <h3>Salle: Exemple</h3>
+            </div>
+
+            <div class="bd">
+                <form action="#" method="POST" class="d-block w-100">
+                    <div class="tp-form">
+                        <div class="form-group">
+                            <div class="label">
+                                <h4>Session d'examen</h4>
+                            </div>
+                            <div class="select">
+                                <select>
+                                    <option value="1">1 Trimèstre</option>
+                                    <option value="2">2 Trimèstre</option>
+                                    <option value="3">3 Trimèstre</option>
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="form-group">
+                            <div class="label">
+                                <h4>Type d'examen</h4>
+                            </div>
+                            <div class="input">
+                                <input type="text" placeholder="Type d'examen">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label">
+                                <h4>Matière</h4>
+                            </div>
+                            <div class="select">
+                                <select>
+                                    <option value="1">Anglais</option>
+                                    <option value="2">Français</option>
+                                    <option value="3">Malagasy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Matricule</th>
+                                <th scope="col">Nom & Prénom</th>
+                                <th scope="col">Sexe</th>
+                                <th scope="col">Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">
+                                    1
+                                </th>
+                                <td>
+                                    0164/24
+                                </td>
+                                <td>
+                                    ANDRIAMANARIVO Olivier
+                                </td>
+                                <td>
+                                    Garçon
+                                </td>
+                                <td>
+                                    <input type="text" class="input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    1
+                                </th>
+                                <td>
+                                    0164/24
+                                </td>
+                                <td>
+                                    ANDRIAMANARIVO Olivier
+                                </td>
+                                <td>
+                                    Garçon
+                                </td>
+                                <td>
+                                    <input type="text" class="input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    1
+                                </th>
+                                <td>
+                                    0164/24
+                                </td>
+                                <td>
+                                    ANDRIAMANARIVO Olivier
+                                </td>
+                                <td>
+                                    Garçon
+                                </td>
+                                <td>
+                                    <input type="text" class="input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    1
+                                </th>
+                                <td>
+                                    0164/24
+                                </td>
+                                <td>
+                                    ANDRIAMANARIVO Olivier
+                                </td>
+                                <td>
+                                    Garçon
+                                </td>
+                                <td>
+                                    <input type="text" class="input">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    1
+                                </th>
+                                <td>
+                                    0164/24
+                                </td>
+                                <td>
+                                    ANDRIAMANARIVO Olivier
+                                </td>
+                                <td>
+                                    Garçon
+                                </td>
+                                <td>
+                                    <input type="text" class="input">
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <div class="submit">
+                        <button type="submit" href="./print-classe.html" class="btn btn-primary">Terminer</button>
+                    </div>
+                </form>
+            </div>
+           
+        </div>
+    </div>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/main.js"></script>
+    
+</body>
+</html>

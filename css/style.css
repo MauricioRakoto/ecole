@@ -1,0 +1,955 @@
+/********** Template CSS **********/
+:root {
+    --primary: #009CFF;
+    --light: #F3F6F9;
+    --dark: #191C24;
+}
+
+
+
+.back-to-top {
+    position: fixed;
+    display: none;
+    right: 45px;
+    bottom: 45px;
+    z-index: 99;
+}
+
+.df-jc-ac {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.df-jb-ac {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+}
+
+/********** Présentation **********/
+.top-pres .title {
+    display: flex;
+    gap: 10px;
+}
+
+.top-pres .title img {
+    width: 50px;
+    height: 50px;
+}
+
+.top-pres .title h1 {
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.top-pres .links {
+    position: absolute;
+    right: 0;
+    width: 300px;
+    display: flex;
+    gap: 10px;
+}
+
+.top-pres .links a.btn-link {
+    width: 150px;
+    height: 35px;
+    border: 2px solid #009cff;
+    color: #000;
+    transition: 1s ease-in-out;
+}
+
+.top-pres .links a.btn-link:hover {
+    background: #d3cad9;
+}
+
+.intro .image {
+    width: 100%; 
+    height: 400px;
+    border-radius: 10px;
+    background: #d3cad9;
+}
+
+.intro .text {
+    padding-right: 60px;
+}
+
+.intro .text p {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    text-align: justify;
+    line-height: 2;
+}
+
+/*** Modal ***/
+.modal-add {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 9;
+}
+
+.modal-add .add-content {
+    opacity: 0;
+    position: relative;
+    top: 50px;
+    width: 400px;
+    height: auto;
+    min-height: 200px;
+    background: #009CFF;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: 1s ease-in-out;
+}
+
+.modal-add .add-content .tp-add {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 35px;
+    background: #d3cad9;
+    padding: 5px 20px;
+}
+
+.modal-add .add-content .tp-add .ttl h1 {
+    font-size: 20px;
+}
+
+.modal-add .add-content .tp-add .close {
+    width: 25px;
+}
+
+.modal-add .add-content .tp-add .close a {
+    width: 100%;
+    height: 25px;
+    background: #fff;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+.modal-add .add-content .bd-add {
+    padding: 10px 20px;
+}
+
+.modal-add .add-content .bd-add .form-group {
+    margin-bottom: 10px;
+}
+
+.modal-add .add-content .bd-add .form-group .label h4 {
+    font-size: 16px;
+}
+
+.modal-add .add-content .bd-add .form-group .input {
+    margin-top: 10px;
+}
+
+.modal-add .add-content .bd-add .form-group .input input,
+.modal-add .add-content .bd-add .form-group .select select {
+    width: 100%;
+    height: 30px;
+    background: none;
+    border: 1px solid #fff;
+    padding: 5px 10px;
+    color: #fff;
+    outline: none;
+    border-radius: 3px;
+}
+
+.modal-add .add-content .bd-add .form-group .select select {
+    color: #000;
+}
+
+.modal-add .add-content .bd-add .form-submit {
+    position: absolute;
+    width: 90%;
+    bottom: 0;
+    margin-bottom: 10px;
+}
+
+.modal-add .add-content .bd-add .form-submit button {
+    width: 100%;
+    height: 35px;
+    background: #fff;
+    border: 0;
+    border-radius: 5px;
+    transition: .5s ease-in-out;
+}
+
+.modal-add .add-content .bd-add .form-submit button:hover {
+    background: #d3cad9;
+}
+
+/*** Spinner ***/
+#spinner {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .5s ease-out, visibility 0s linear .5s;
+    z-index: 99999;
+}
+
+#spinner.show {
+    transition: opacity .5s ease-out, visibility 0s linear 0s;
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/*** Button ***/
+.tp a.btn-add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 30px;
+    background: #009CFF;
+    border: none;
+    border-radius: 5px;
+    color: #000;
+    text-decoration: none;
+}
+
+.btn {
+    transition: .5s;
+}
+
+.btn.btn-primary {
+    color: #FFFFFF;
+}
+
+.btn-square {
+    width: 38px;
+    height: 38px;
+}
+
+.btn-sm-square {
+    width: 32px;
+    height: 32px;
+}
+
+.btn-lg-square {
+    width: 48px;
+    height: 48px;
+}
+
+.btn-square,
+.btn-sm-square,
+.btn-lg-square {
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+    border-radius: 50px;
+}
+
+
+/*** Layout ***/
+.sidebar {
+    position: fixed;
+    top: 30px;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    height: 100vh;
+    overflow-y: auto;
+    transition: 0.5s;
+    z-index: 999;
+    padding: 0 20px;
+}
+
+.content {
+    margin-left: 250px;
+    min-height: 100vh;
+    background: #FFFFFF;
+    transition: 0.5s;
+}
+
+@media (min-width: 992px) {
+    .sidebar {
+        margin-left: 0;
+    }
+
+    .sidebar.open {
+        margin-left: -250px;
+    }
+
+    .content {
+        width: calc(100% - 250px);
+    }
+
+    .content.open {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        margin-left: -250px;
+    }
+
+    .sidebar.open {
+        margin-left: 0;
+    }
+
+    .content {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+
+/*** Navbar ***/
+.navbar .nav-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .nav-top .nav-l h3 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.navbar .nav-top .nav-r a {
+    width: 20px;
+    height: 20px;
+    background: #d3cad9;
+    border-radius: 50%;
+    color: #000;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.navbar.navbar-expand .menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar.navbar-expand .menu button.btn-menu {
+    width: 30px;
+    height: 30px;
+    background: #d3cad9;
+    border: 0;
+    border-radius: 50%;
+}
+
+.navbar.navbar-expand .menu .menu-name {
+    height: 25px;
+    display: flex;
+}
+
+.navbar.navbar-expand .menu .menu-name h4 {
+    font-size: 14px;
+}
+
+.navbar.navbar-expand .menu .menu-modal {
+    opacity: 0;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    margin-right: 20px;
+    background: #009CFF;
+    width: 200px;
+    height: auto;
+    min-height: 200px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: 1s ease-in-out;
+}
+
+.navbar.navbar-expand .menu .menu-modal.show {
+    opacity: 1;
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-top .tp-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-top .tp-image .image {
+    width: 50px;
+    height: 50px;
+    background: #d3cad9;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-top .tp-name {
+    display: flex;
+    justify-content: center;
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-top .tp-name h4 {
+    font-size: 16px;
+
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-top .tp-compte h4 {
+    font-size: 14px;
+}
+
+
+.navbar.navbar-expand .menu .menu-modal .modal-body {
+    padding: 0;
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-body ul.modal-links {
+    list-style: none;
+    padding-left: 0;
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-body ul.modal-links li {
+    margin-bottom: 10px;
+}
+
+.navbar.navbar-expand .menu .menu-modal .modal-body ul.modal-links li a {
+    display: flex;
+    background: #d3cad9;
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #000;
+    padding: 5px 15px;
+}
+
+.sidebar .navbar-nav ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar .navbar-nav .nav-link {
+    height: 30px;
+    padding: 5px 15px; 
+    color: #000;
+    font-weight: 500;
+    outline: none;
+    background: #d3cad9;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}
+
+.sidebar .navbar-nav .nav-link:hover,
+.sidebar .navbar-nav .nav-link.active {
+    background: #009CFF;
+    
+}
+
+.sidebar .navbar .navbar-nav .nav-link i {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border-radius: 40px;
+}
+
+.sidebar .navbar .navbar-nav .nav-link:hover i,
+.sidebar .navbar .navbar-nav .nav-link.active i {
+    background: var(--light);
+}
+
+.sidebar .navbar .dropdown-toggle::after {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    border: none;
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    transition: .5s;
+}
+
+.sidebar .navbar .dropdown-toggle[aria-expanded=true]::after {
+    transform: rotate(-180deg);
+}
+
+.sidebar .navbar .dropdown-item {
+    padding-left: 25px;
+    border-radius: 0 30px 30px 0;
+}
+
+.content .navbar .navbar-nav .nav-link {
+    margin-left: 25px;
+    padding: 12px 0;
+    color: var(--dark);
+    outline: none;
+}
+
+.content .navbar .navbar-nav .nav-link:hover,
+.content .navbar .navbar-nav .nav-link.active {
+    color: var(--primary);
+}
+
+.content .navbar .sidebar-toggler,
+.content .navbar .navbar-nav .nav-link i {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border-radius: 40px;
+}
+
+.content .navbar .dropdown-toggle::after {
+    margin-left: 6px;
+    vertical-align: middle;
+    border: none;
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    transition: .5s;
+}
+
+.content .navbar .dropdown-toggle[aria-expanded=true]::after {
+    transform: rotate(-180deg);
+}
+
+@media (max-width: 575.98px) {
+    .content .navbar .navbar-nav .nav-link {
+        margin-left: 15px;
+    }
+}
+
+.col-right {
+    position: relative;
+    width: 83%;
+    top: -90px;
+    left: 210px;
+    
+}
+
+/**** Inscription *****/
+
+.col-right .inscrit {
+    display: flex;
+}
+
+.col-right .inscrit .title h3 {
+    font-size: 25px;
+}
+
+.col-right .inscrit .modes {
+    display: flex;
+    gap: 10px;
+}
+
+.col-right .inscrit .modes button.btn-add {
+    width: auto;
+    min-width: 100px;
+    height: 30px;
+    background: #d3cad9;
+    border: 0;
+    border-radius: 5px;
+    transition: 1s ease-in-out;
+}
+
+.col-right .inscrit .modes button.btn-add.active {
+    background: #009CFF;
+}
+
+.col-right .bd-add .datas {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.col-right .bd-add .datas .form-group {
+    width: 200px;
+}
+
+.col-right .bd-add .datas .form-group .label h4 {
+    font-size: 14px;
+}
+
+.col-right .bd-add .datas .form-group .input input,
+.col-right .bd-add .datas .form-group .select select {
+    width: 100%;
+    height: 30px;
+    background: none;
+    border: 1px solid #000;
+    border-radius: 3px;
+    padding: 5px 10px;
+}
+
+.col-right .bd-add .bottom {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.col-right .bd-add .bottom button.btn-add,
+.col-right .bd-add .bottom a.btn-add {
+    width: 150px;
+    height: 30px;
+    background: #d3cad9;
+    border: 0;
+    border-radius: 5px;
+    transition: 1s ease-in-out;
+}
+
+.col-right .bd-add .bottom button.btn-add:hover,
+.col-right .bd-add .bottom a.btn-add:hover {
+    background: #009CFF;
+}
+
+.col-right .bd-add .bottom a.btn-add  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+}
+
+.tp {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tp .search form {
+    display: flex;
+    gap: 20px;
+}
+
+.tp .search form input {
+    width: 200px;
+    height: 30px;
+    background: none;
+    border: 1px solid #000;
+    padding: 5px 15px;
+    border-radius: 5px;
+    outline: none;
+}
+
+.tp .search form button {
+    width: 120px;
+    height: 30px;
+    background: #009CFF;
+    border-radius: 5px;
+    border: 0;
+}
+
+
+
+/**** Items ******/
+.bd {
+    margin-top: 20px;
+}
+
+.bd .items {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.bd .items .card {
+    width: 200px;
+    height: 80px;
+    background: #d3cad9;
+    padding: 10px;
+    border-radius: 5px;
+    transition: .5s ease-in-out;
+    margin-bottom: 10px;
+    z-index: 5;
+    border: 0;
+}
+
+.bd .items .card:hover {
+    background: #009CFF;
+}
+
+.bd .items .card .card-body {
+    padding: 0;
+}
+
+.bd .datas a.data .liste-name {
+    height: 25px;
+    margin-bottom: 15px;
+}
+
+.bd .items .carde h3,
+.bd .items .carde h4 {
+    font-weight: 700;
+}
+
+.bd .items .card h3 {
+    font-size: 20px;
+}
+
+.bd .items .card h4 {
+    font-size: 16px;
+}
+
+.col-classe-l h1 {
+    font-size: 25px;
+}
+
+.col-classe-l h3 {
+    font-size: 20px;
+}
+
+/****** Tableau ******/
+.bd table tbody tr td a.detail,
+.bt a.btn-print {
+    width: 80px;
+    height: 25px;
+    position: absolute;
+    right: 0;
+    background: #009CFF;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bt a.btn-print,
+.bt button.btn-print {
+    position: relative;
+    width: 100px;
+}
+
+.bd table tbody tr td input {
+    width: 100px;
+    height: 35px;
+    padding: 5px 10px;
+}
+
+/*** Date Picker ***/
+.bootstrap-datetimepicker-widget.bottom {
+    top: auto !important;
+}
+
+.bootstrap-datetimepicker-widget .table * {
+    border-bottom-width: 0px;
+}
+
+.bootstrap-datetimepicker-widget .table th {
+    font-weight: 500;
+}
+
+.bootstrap-datetimepicker-widget.dropdown-menu {
+    padding: 10px;
+    border-radius: 2px;
+}
+
+.bootstrap-datetimepicker-widget table td.active,
+.bootstrap-datetimepicker-widget table td.active:hover {
+    background: var(--primary);
+}
+
+.bootstrap-datetimepicker-widget table td.today::before {
+    border-bottom-color: var(--primary);
+}
+
+
+/*** Testimonial ***/
+.progress .progress-bar {
+    width: 0px;
+    transition: 2s;
+}
+
+
+/*** Testimonial ***/
+.testimonial-carousel .owl-dots {
+    margin-top: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.testimonial-carousel .owl-dot {
+    position: relative;
+    display: inline-block;
+    margin: 0 5px;
+    width: 15px;
+    height: 15px;
+    border: 5px solid var(--primary);
+    border-radius: 15px;
+    transition: .5s;
+}
+
+.testimonial-carousel .owl-dot.active {
+    background: var(--dark);
+    border-color: var(--primary);
+}
+
+
+
+
+.carousel {
+    margin-top: 20px;
+    
+}
+
+.carousel-item {
+    transition: 1s ease-in-out;
+}
+
+
+.carousel-indicators {
+    position: relative;
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 120px;
+    height: 35px;
+    padding: 5px 10px;
+    margin-left: 0;
+    text-indent: 0rem;
+    background: #d3cad9;
+    box-sizing: border-box;
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: 5px;
+}
+
+.carousel-indicators [data-bs-target].active,
+.carousel-indicators [data-bs-target]:hover {
+    background: #009CFF;
+}
+
+
+.manuel .submit {
+    margin-top: 20px;
+}
+
+.manuel .form-group .label h4 {
+    font-size: 14px;
+}
+
+.manuel .form-group {
+    margin-bottom: 10px;
+}
+
+.manuel .form-group .input input,
+.manuel .form-group .select select {
+    width: 300px;
+    height: 30px;
+    border: 1px solid #d3cad9;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.manuel .submit button,
+.auto .submit button {
+    width: 150px;
+    height: 40px;
+    background: #009CFF;
+}
+
+/*** Notes ***/
+.notes {
+    display: flex; 
+    gap: 10px;
+}
+
+.notes a.btn-add {
+    background: #d3cad9;
+    width: auto;
+    min-width: 90px;
+    transition: 1s ease-in-out;
+}
+
+.notes a.btn-add.active {
+    background: #009CFF;
+}
+
+.tp-form .form-group {
+    margin-bottom: 10px;
+}
+
+.tp-form .form-group .label h4 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tp-form .form-group .select select,
+.tp-form .form-group .input input {
+    width: 200px;
+    height: 30px;
+    background: none;
+    border: 1px solid #000;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+/*** Periodes d'examen ***/
+.periodes {
+    margin-top: 10px;
+}
+
+.periodes .periode-name h3 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.periodes .periodes-links {
+    display: flex;
+    gap: 10px;
+}
+
+.periodes .periodes-links a {
+    position: relative;
+    width: 100px;
+    height: 30px;
+    color: #000;
+    text-decoration: none;
+}
+
+.periodes .periodes-links a::after {
+    position: absolute;
+    content: '';
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: none;
+    transition: 1s ease-in-out;
+}
+
+.periodes .periodes-links a.active {
+    color: #009CFF;
+}
+
+.periodes .periodes-links a.active::after,
+.periodes .periodes-links a:hover::after {
+    background: #009CFF;
+}
+
+
+@media (max-width: 1016px) {
+    .col-right {
+        width: 78%;
+        top: -90px;
+        left: 210px;
+    }
+
+    .tp .search {
+        margin-right: 10px;
+    }
+
+    .bd .items {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .col-right .bd-add .datas {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
