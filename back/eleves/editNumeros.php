@@ -2,6 +2,7 @@
     require_once "../database.php";
 
     if (isset($_POST['modifier']) && isset($_POST['numbers'])) {
+        $classe_id = $_GET['id'];
         $numeros = $_POST['numbers'];
 
         // Préparation de la requète
@@ -18,7 +19,7 @@
                 <div style='width: 100%; display: flex; justify-content: center; align-items: center'>
                         <div style='width: 300px; height: 100px; background:green; border-radius: 10px; padding: 20px'>
                             <p>Numéros mis à jour avec succés. </p>
-                            <a href='../../classes/eleves.php?id='>Retour</a>
+                            <a href='../../classes/eleves.php?id=".$classe_id."'>Retour</a>
                         </div> 
                 </div> 
         ";

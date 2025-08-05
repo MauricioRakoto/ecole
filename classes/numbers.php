@@ -52,7 +52,7 @@
 <body>
     <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
         <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo.png" alt="logo" style="width: 35px">
+            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
             <h3 style="font-size: 20px">Ecole</h3>
         </a>
         <div class="menu">
@@ -160,7 +160,7 @@
                         <div class="carousel-inner">
                                 <div class="carousel-item active">
 
-                                    <form action="../back/eleves/editNumeros.php" method="POST" class="d-block w-100 auto">
+                                    <form action="../back/eleves/editNumeros.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 auto">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>

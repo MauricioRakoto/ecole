@@ -19,7 +19,7 @@
         <div class="col-md-8">
           <div class="title" style="display: flex;
     gap: 10px;">
-                <img src="./assets/img/logo.png" alt="" style="width: 50px;
+                <img src="./assets/img/logo-ecole.png" alt="" style="width: 50px;
     height: 50px;">
                 <h1 style="font-size: 25px">Ecole</h1>
           </div>

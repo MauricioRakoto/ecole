@@ -16,6 +16,23 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`ecole` /*!40100 DEFAULT CHARACTER SET l
 
 USE `ecole`;
 
+/*Table structure for table `absences` */
+
+DROP TABLE IF EXISTS `absences`;
+
+CREATE TABLE `absences` (
+  `absences_id` int(10) NOT NULL AUTO_INCREMENT,
+  `eleve_id` int(10) NOT NULL,
+  `matiere_id` int(10) NOT NULL,
+  `minutes` int(11) NOT NULL,
+  `date_absence` date NOT NULL,
+  PRIMARY KEY (`absences_id`),
+  KEY `id_eleve` (`eleve_id`),
+  KEY `id_matiere` (`matiere_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+/*Data for the table `absences` */
+
 /*Table structure for table `classes` */
 
 DROP TABLE IF EXISTS `classes`;
@@ -27,15 +44,34 @@ CREATE TABLE `classes` (
   `annee_debut` year(4) DEFAULT NULL,
   `annee_fin` year(4) DEFAULT NULL,
   `salle` varchar(50) DEFAULT NULL,
-  `matiere` int(10) DEFAULT NULL,
   PRIMARY KEY (`classe_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 /*Data for the table `classes` */
 
-insert  into `classes`(`classe_id`,`nom_classe`,`niveau`,`annee_debut`,`annee_fin`,`salle`,`matiere`) values 
-(3,'1Q21','1',2025,2026,'101',NULL),
-(4,'1Q30','1',2025,2026,'101',NULL);
+insert  into `classes`(`classe_id`,`nom_classe`,`niveau`,`annee_debut`,`annee_fin`,`salle`) values 
+(3,'1Q21','1',2025,2026,'101'),
+(4,'1Q30','1',2025,2026,'101'),
+(5,'3G20','1',2025,2026,'101'),
+(6,'Classe1','Seconde',2025,2026,'101');
+
+/*Table structure for table `cours` */
+
+DROP TABLE IF EXISTS `cours`;
+
+CREATE TABLE `cours` (
+  `cours_id` int(11) NOT NULL AUTO_INCREMENT,
+  `classe_id` int(11) DEFAULT NULL,
+  `matiere_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`cours_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+/*Data for the table `cours` */
+
+insert  into `cours`(`cours_id`,`classe_id`,`matiere_id`) values 
+(3,3,1),
+(4,3,2),
+(7,3,3);
 
 /*Table structure for table `eleves` */
 
@@ -67,13 +103,15 @@ CREATE TABLE `eleves` (
   `classe_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`eleve_id`),
   KEY `classe_id` (`classe_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `eleves` */
 
 insert  into `eleves`(`eleve_id`,`numero`,`nom_eleve`,`prenom_eleve`,`sexe_eleve`,`date_naissance`,`lieu_naissance`,`status`,`adresse`,`tel_eleve`,`etablissement_orign`,`annee_scolaire`,`date_inscrit`,`nom_pere`,`profession_pere`,`tel_pere`,`nom_mere`,`profession_mere`,`tel_mere`,`nom_tuteur`,`profession_tuteur`,`tel_tuteur`,`classe_id`) values 
 (1,1,'ANDRIAMAHAFANDRIANA','Rabenjamina Irin\'Antonni','GarÃ§on','2025-06-22','Antananarivo','Passant','Lot ','033','LTPA','2025 - 2026','2025-06-22','','',NULL,'ANDRIATSIMIALAVAHOAKA Maminiaina Jackie','mÃ©nagÃ¨re','0320236467','','','',3),
-(2,2,'BOTONIRINA','Lunneil Dumont','GarÃ§on','2025-06-22','Antananarivo','Passant','Lot ','033','LTPA','2025 - 2026','2025-06-22','BOTONIRINA Tsivoantsiny','militaire',NULL,'RASOATINA Elicia','mÃ©nagÃ¨re','0344503513','','','',3);
+(2,2,'BOTONIRINA','Lunneil Dumont','GarÃ§on','2025-06-22','Antananarivo','Passant','Lot ','033','LTPA','2025 - 2026','2025-06-22','BOTONIRINA Tsivoantsiny','militaire',NULL,'RASOATINA Elicia','mÃ©nagÃ¨re','0344503513','','','',3),
+(3,NULL,'AINAHARIVAY Andrianasana','Lucas Miaro','GarÃ§on','2025-08-02','a','Passant','Lot','032','LTPA','2025 - 2026','2025-07-28','RANDRIATSITRATRANIHAFA Harivahy','vendeur',NULL,'RAZAZATIANA Andrianatoanadro','vendeuse','0346658067','','','',5),
+(4,3,'AINANDRIANINA','Fanahy Ryo','GarÃ§on','2025-08-02','ANKADIFOTSY','Passant','Lot','032','LTPA','2025 - 2026','2025-08-02','RANDRIAMBELOSON DesirÃ©','chauufeur',NULL,'Razafindrabe tricia laurence','vendeuse','0340707111','RANDRIANASOLO Narindra','cuisiniÃ¨re','0322634045',3);
 
 /*Table structure for table `matieres` */
 
@@ -83,10 +121,16 @@ CREATE TABLE `matieres` (
   `matiere_id` int(10) NOT NULL AUTO_INCREMENT,
   `nom_matiere` varchar(100) NOT NULL,
   `coefficient` int(5) DEFAULT NULL,
+  `classe` int(10) DEFAULT NULL,
   PRIMARY KEY (`matiere_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `matieres` */
+
+insert  into `matieres`(`matiere_id`,`nom_matiere`,`coefficient`,`classe`) values 
+(1,'Anglais',2,NULL),
+(2,'Malagasy',2,NULL),
+(3,'FranÃ§ais',2,NULL);
 
 /*Table structure for table `responsable` */
 
@@ -99,18 +143,15 @@ CREATE TABLE `responsable` (
   `username` varchar(100) NOT NULL,
   `password` varchar(100) DEFAULT NULL,
   `compte` varchar(100) NOT NULL,
+  `image` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`responsable_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 /*Data for the table `responsable` */
 
-insert  into `responsable`(`responsable_id`,`nom_responsable`,`prenom_responsable`,`username`,`password`,`compte`) values 
-(5,'RAKOTO','Lucah','Lucah','$2y$10$wd584dj5TUcIgFz7HaAaCelP68gEWUFW5DO1885H4ibrSC5uhGFvG','Surveillant'),
-(6,'RAKOTO','Mauricio','Mauricio','$2y$10$wcSiHjISVqPG/rkuzMevLeIU34nR5EswYqkXDmwGVYjUHiZyJwiqy','Professeur'),
-(7,'RAKOTO','Stanic','Stanic','$2y$10$IBC/x83YvQCXFdnLXf5HMemIIgU.Gp1Tl0ndcZXo05Qs/DJ/OLdem','Surveillant'),
-(8,'RAKOTO','Stan','Stan','$2y$10$4Z/ikCR2U9V3iJbaNigXWO.TyRGrycjNHRZjkP/RGzuG/tpvy5oYG','Surveillant'),
-(9,'RAKOTO','StanC','StanC','$2y$10$a301KSQ./CZUzbVv.7BzZefMuE17LehMICUC3WqPNm/FsYG0FD5wK','Surveillant');
+insert  into `responsable`(`responsable_id`,`nom_responsable`,`prenom_responsable`,`username`,`password`,`compte`,`image`) values 
+(10,'RAKOTO','Lucah','Lucah','$2y$10$gWU3OPV2VQ9hvd51RJ9ea.bDx..fo3xrp9dMIyXa.PHIi9JgXc1Ru','Surveillant',NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

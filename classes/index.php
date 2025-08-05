@@ -38,7 +38,7 @@
     <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
         <!-- Logo et lien vers la page d'accueil -->
         <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo.png" alt="logo" style="width: 35px">
+            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
             <h3 style="font-size: 20px">Ecole</h3>
         </a>
 

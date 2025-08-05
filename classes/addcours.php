@@ -25,6 +25,18 @@
     $sql_matieres = "SELECT matiere_id, nom_matiere, coefficient FROM matieres ORDER BY matiere_id ASC";
     $stmt_matieres = $pdo->query($sql_matieres);
     $matieres = $stmt_matieres->fetchAll();
+
+    // Requête pour récupérer les élèves de la classe
+    $sql_cours = "SELECT a.*,
+                        b.*
+                FROM cours a
+                LEFT JOIN matieres b
+                ON a.matiere_id = b.matiere_id
+                WHERE a.classe_id = ?               
+    ";
+    $stmt_cours = $pdo->prepare($sql_cours);
+    $stmt_cours->execute([$id_classe]);
+    $cours = $stmt_cours->fetchAll();
 ?>
 
 
@@ -56,17 +68,31 @@
 
         <!-- Formulaire modal pour l'ajout de nouvelle classe -->
         <div class="modal-add">
-        <form action="../back/matieres/addClasseMatiere.php" class="add-content" method="POST" style="height: 250px;">
+        <form action="../back/cours/addCours.php" class="add-content" method="POST" style="height: 250px;">
             <div class="tp-add">
                 <div class="ttl">
-                    <h1>Ajouter un matière</h1>
+                    <h1>Ajouter un cours</h1>
                 </div>
                 <div class="close">
-                    <a href="./matieres.php?id=<?php echo $id_classe ?>">X</a>
+                    <a href="./cours.php?id=<?php echo $id_classe ?>">X</a>
                 </div>
             </div>
             <div class="bd-add">
                 <!-- Champ: nom du matiere -->
+                <div class="form-group">
+                    <div class="label">
+                        <h4>Classe</h4>
+                    </div>
+                    <div class="select">
+                        <select name="classe_id">
+                            <?php foreach ( $classes as $classe ): ?>
+                                <option value="<?= $classe['classe_id'] ?>"><?= $classe['nom_classe'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <div class="label">
                         <h4>Matière</h4>
@@ -169,8 +195,8 @@
             <?php if (count($classes) > 0):  ?>
                 <div class="tp">
                     <div class="add notes">
-                        <a href="./matieres.php?id=<?php echo $id_classe ?>" class="btn-add">Listes</a>
-                        <a href="./addmatiere.php?id=<?php echo $id_classe ?>" class="btn-add active">Nouveaux</a>
+                        <a href="./cours.php?id=<?php echo $id_classe ?>" class="btn-add">Listes</a>
+                        <a href="./addcours.php?id=<?php echo $id_classe ?>" class="btn-add active">Nouveaux</a>
                     </div>
                 
                 </div>
@@ -178,14 +204,14 @@
                 <div class="col-classe-l" style="margin-top: 20px;">
                     <?php foreach ( $classes as $classe ): ?>
                         <!-- Informations générales de la classe -->
-                        <h1>Matières dans la Classe <?php echo $classe['nom_classe'] ?></h1>
+                        <h1>Cours dans la Classe <?php echo $classe['nom_classe'] ?></h1>
                         <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
                         <h3>Salle: <?php echo $classe['salle'] ?></h3>
                     <?php endforeach; ?>
                 </div>
 
                 <div class="bd">
-                    <?php if (count($matieres) > 0):  ?>
+                    <?php if (count($cours) > 0):  ?>
                         <!-- Affichage de la liste des élèves -->
                         <table class="table table-hover">
                             <thead>
@@ -197,24 +223,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ( $matieres as $matiere ): ?>
+                                <?php foreach ( $cours as $cour ): ?>
                                     <tr>
                                         <!-- Numéro attribué -->
                                         <th scope="row">
-                                            <?= $matiere['matiere_id'] ?>
+                                            <?= $cour['cours_id'] ?>
                                         </th>
                                         <!-- ID élève -->
                                         <td>
-                                            <?= $matiere['nom_matiere'] ?>
+                                            <?= $cour['nom_matiere'] ?>
                                         </td>
                                         <!-- Nom complet -->
                                         <td>
-                                            <?= $matiere['coefficient'] ?>
+                                            <?= $cour['coefficient'] ?>
                                         </td>
                                         <td>
                                             <div class="links">
-                                                <a href="#" class="btn-btn-print">Modifier</a>
-                                                <a href="#" class="btn-btn-print">Supprimer</a>
+                                                <a href="#" class="btn btn-print">Modifier</a>
+                                                <a href="#" class="btn btn-print">Supprimer</a>
                                             </div>
                                             
                                         </td>

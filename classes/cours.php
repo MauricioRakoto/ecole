@@ -22,16 +22,16 @@
     $classes = $stmt_classes->fetchAll();
 
     // Requête pour récupérer les élèves de la classe
-    $sql_matieres = "SELECT matiere_id, 
-                        nom_matiere, 
-                        coefficient 
-                    FROM matieres 
-                    WHERE matiere_id = ?
-                    ORDER BY matiere_id ASC 
+    $sql_cours = "SELECT a.*,
+                        b.*
+                FROM cours a
+                LEFT JOIN matieres b
+                ON a.matiere_id = b.matiere_id
+                WHERE a.classe_id = ?               
     ";
-    $stmt_matieres = $pdo->prepare($sql_matieres);
-    $stmt_matieres->execute([$id_classe]);
-    $matieres = $stmt_matieres->fetchAll();
+    $stmt_cours = $pdo->prepare($sql_cours);
+    $stmt_cours->execute([$id_classe]);
+    $cours = $stmt_cours->fetchAll();
 ?>
 
 
@@ -64,7 +64,7 @@
         <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
             <!-- Logo et nom -->
             <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo.png" alt="logo" style="width: 35px">
+            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
             <h3 style="font-size: 20px">Ecole</h3>
             </a>
 
@@ -125,11 +125,21 @@
                     </div>
                     <ul>
                         <!-- Liens vers les différentes pages liées à la classe -->
-                        <li><a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a></li>
-                        <li><a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a></li>
-                        <li><a href="./absences.html" class="nav-link">Absences</a></li>
-                        <li><a href="./matieres.php?id=<?php echo $id_classe ?>" class="nav-link active">Matières</a></li>
-                        <li><a href="./notes.html" class="nav-link">Notes</a></li>
+                        <li>
+                            <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
+                        </li>
+                        <li>
+                            <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
+                        </li>
+                        <li>
+                            <a href="./absences.html" class="nav-link">Absences</a>
+                        </li>
+                        <li>
+                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link active">Cours</a>
+                        </li>
+                        <li>
+                            <a href="./notes.html" class="nav-link">Notes</a>
+                        </li>
                         <li><a href="./renvoyer.html" class="nav-link">Renvoyer</a></li>
                         <li><a href="index.php" class="nav-link">Bulletins</a></li>
                     </ul>
@@ -141,8 +151,8 @@
             <?php if (count($classes) > 0):  ?>
                 <div class="tp">
                     <div class="add notes">
-                        <a href="./matieres.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
-                        <a href="./addmatiere.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
+                        <a href="./cours.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
+                        <a href="./addcours.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
                     </div>
                 
                 </div>
@@ -150,14 +160,14 @@
                 <div class="col-classe-l" style="margin-top: 20px;">
                     <?php foreach ( $classes as $classe ): ?>
                         <!-- Informations générales de la classe -->
-                        <h1>Matières dans la Classe <?php echo $classe['nom_classe'] ?></h1>
+                        <h1>Cours dans la Classe <?php echo $classe['nom_classe'] ?></h1>
                         <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
                         <h3>Salle: <?php echo $classe['salle'] ?></h3>
                     <?php endforeach; ?>
                 </div>
 
                 <div class="bd">
-                    <?php if (count($matieres) > 0):  ?>
+                    <?php if (count($cours) > 0):  ?>
                         <!-- Affichage de la liste des élèves -->
                         <table class="table table-hover">
                             <thead>
@@ -169,24 +179,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ( $matieres as $matiere ): ?>
+                                <?php foreach ( $cours as $cour ): ?>
                                     <tr>
                                         <!-- Numéro attribué -->
                                         <th scope="row">
-                                            <?= $matiere['matiere_id'] ?>
+                                            <?= $cour['cours_id'] ?>
                                         </th>
                                         <!-- ID élève -->
                                         <td>
-                                            <?= $matiere['nom_matiere'] ?>
+                                            <?= $cour['nom_matiere'] ?>
                                         </td>
                                         <!-- Nom complet -->
                                         <td>
-                                            <?= $matiere['coefficient'] ?>
+                                            <?= $cour['coefficient'] ?>
                                         </td>
                                         <td>
                                             <div class="links">
-                                                <a href="#" class="btn-btn-print">Modifier</a>
-                                                <a href="#" class="btn-btn-print">Supprimer</a>
+                                                <a href="#" class="btn btn-print">Modifier</a>
+                                                <a href="#" class="btn btn-print">Supprimer</a>
                                             </div>
                                             
                                         </td>

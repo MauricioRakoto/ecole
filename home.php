@@ -10,17 +10,24 @@
     }
 
     // Récupérer les 20 derniers élèves inscrits
-    $sql = "SELECT eleve_id, 
-                nom_eleve, 
-                prenom_eleve, 
-                sexe_eleve, 
-                date_inscrit
-            FROM eleves 
-            ORDER BY eleve_id DESC 
+    $sql = "SELECT a.*,
+            b.classe_id,
+            b.nom_classe
+            FROM eleves a
+            LEFT JOIN classes b 
+            ON a.classe_id = b.classe_id
+            ORDER BY a.eleve_id DESC 
             LIMIT 20";
-    $stmt = $pdo->prepare($sql);
+    $stmt = $pdo->query($sql);
     $stmt->execute();
     $eleves = $stmt->fetchAll();
+
+    // Récupérer un compte
+    $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+    $stmt_compte = $pdo->prepare($sql_compte);
+    $stmt_compte->execute([$_SESSION['responsable_id']]);
+    $comptes = $stmt_compte->fetchAll();
+
 
 ?>
 
@@ -76,25 +83,37 @@
                                 <th class="col">Matricule</th>
                                 <th class="col">Nom & Prénom</th>
                                 <th class="col">Sexe</th>
-                                <th class="col">Date Inscrit</th>
                                 <th class="col">Classes</th>
+                                <th class="col">Date Inscrit</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ( $eleves as $eleve ): ?>
                                 <tr>
                                     <th scope="row">
-                                        <?php echo $eleve['eleve_id'] ?>
+                                        <?= $eleve['eleve_id'] ?>
                                     </th>
                                     <td>
-                                        <?php echo $eleve['nom_eleve'] ?>
-                                        <?php echo $eleve['prenom_eleve'] ?>
+                                        <?=  $eleve['nom_eleve'] ?>
+                                        <?=  $eleve['prenom_eleve'] ?>
                                     </td>
                                     <td>
-                                        <?php echo $eleve['sexe_eleve'] ?>
+                                        <?=  $eleve['sexe_eleve'] ?>
                                     </td>
                                     <td>
-                                        <?php echo $eleve['date_inscrit'] ?>
+                                        <?= $eleve['nom_classe']; ?>
+                                    </td>
+
+                                    <td>
+                                        <?php 
+                                        
+                                            $get_date_inscrit = new DateTime($eleve['date_inscrit']);
+                                            $date_inscrit = $get_date_inscrit->format('d-m-Y');
+                                        
+                                            echo $date_inscrit;
+
+                                        ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
