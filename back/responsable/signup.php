@@ -45,7 +45,7 @@
             $_SESSION['prenom_responsable'] = $user['prenom_responsable'];
             $_SESSION['compte'] = $user['compte'];
 
-            header('refresh:2;url=../../home.php');
+            header('Location:../../home'. '.php');
         }
     }
     ?>

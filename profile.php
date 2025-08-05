@@ -9,18 +9,11 @@
         exit();
     }
 
-    // Récupérer les 20 derniers élèves inscrits
-    $sql = "SELECT a.*,
-            b.classe_id,
-            b.nom_classe
-            FROM eleves a
-            LEFT JOIN classes b 
-            ON a.classe_id = b.classe_id
-            ORDER BY a.eleve_id DESC 
-            LIMIT 20";
-    $stmt = $pdo->query($sql);
-    $stmt->execute();
-    $eleves = $stmt->fetchAll();
+     // Récupérer un compte
+     $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+     $stmt_compte = $pdo->prepare($sql_compte);
+     $stmt_compte->execute([$_SESSION['responsable_id']]);
+     $comptes = $stmt_compte->fetchAll();
 
 ?>
 
@@ -47,7 +40,13 @@
 
             <div class="profile-body">
                 <div class="profile-image">
-                    <img src="./assets/img/Koala.jpg" alt="">
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <img src="./assets/img/<?= $compte['image'] ?>" alt="<?= $compte['image'] ?>">
+                        <?php else: ?>
+                            <p>Pas d'image</p>
+                        <?php endif; ?>
+                    <?php endforeach; ?>  
                 </div>
 
                 <div class="pro-name">
@@ -85,7 +84,7 @@
                 <div class="profile-links">
                     <a href="./editprofile.php" class="link">Mettre à jour</a>
                     <a href="#" class="link">Effacer</a>
-                    <a href="#" class="link">Retour</a>
+                    <a href="./home.php" class="link">Retour</a>
                 </div>
                 
             </div>

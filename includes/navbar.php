@@ -26,7 +26,7 @@
                             </div>
                             <?php else: ?>
                                 <div class="image">
-                                    Image
+                                    M
                                 </div>
                             <?php endif; ?>
                        

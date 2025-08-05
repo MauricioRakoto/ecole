@@ -12,10 +12,26 @@
         exit();
     }
 
+    if ($_SESSION['compte'] !== "Surveillant") {
+        header("Location: ../home" . ".php");
+    }
+
      // Récupération des classes depuis la base de données
     $sql = "SELECT classe_id, nom_classe FROM classes";
     $stmt_classes = $pdo->query($sql);
     $classes = $stmt_classes->fetchAll();
+
+     // Récupération des matières 
+     $sql = "SELECT matiere_id, nom_matiere, coefficient FROM matieres";
+     $stmt_matieres = $pdo->query($sql);
+     $matieres = $stmt_matieres->fetchAll();
+
+
+      // Récupérer un compte
+    $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+    $stmt_compte = $pdo->prepare($sql_compte);
+    $stmt_compte->execute([$_SESSION['responsable_id']]);
+    $comptes = $stmt_compte->fetchAll();
 ?>
 
 <!-- Début du document HTML -->
@@ -39,7 +55,7 @@
 
     <!-- Formulaire modal pour l'ajout de nouvelle classe -->
     <div class="modal-add">
-        <form action="../back/matieres/addMatiere.php" class="add-content" method="POST" style="height: 450px;">
+        <form action="../back/matieres/addMatiere.php" class="add-content" method="POST" style="height: 250px;">
             <div class="tp-add">
                 <div class="ttl">
                     <h1>Ajouter un nouveau matière</h1>
@@ -80,25 +96,41 @@
     <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
             <!-- Logo et titre -->
             <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-                <img src="../assets/img/logo.png" alt="logo" style="width: 35px">
+                <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
                 <h3 style="font-size: 20px">Ecole</h3>
             </a>
 
             <!-- Menu utilisateur -->
             <div class="menu">
-            <button class="btn-menu" id="menu">
-                M
-            </button>
-            <div class="menu-name">
+                <?php foreach ( $comptes as $compte ): ?>
+                    <button class="btn-menu" id="menu">
+                        <?php if (!empty($compte['image'])): ?>
+                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                        <?php else: ?>
+                            M
+                        <?php endif; ?>
+                    </button>
+
+                <?php endforeach; ?>  
+                <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
-            </div>
-            <!-- Menu déroulant utilisateur -->
-            <div class="menu-modal">
-                <div class="modal-top">
+                </div>
+                <!-- Menu déroulant utilisateur -->
+                <div class="menu-modal">
+                    <div class="modal-top">
                     <div class="tp-image">
-                        <div class="image">
-                            Image
-                        </div>
+                        <?php foreach ( $comptes as $compte ): ?>
+                            <?php if (!empty($compte['image'])): ?>
+                                <div class="image">
+                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                </div>
+                                <?php else: ?>
+                                    <div class="image">
+                                        Image
+                                    </div>
+                            <?php endif; ?>
+                       
+                        <?php endforeach; ?>
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -106,15 +138,15 @@
                     <div class="tp-compte">
                         <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                     </div>
-                </div>
-                <div class="modal-body">
+                    </div>
+                    <div class="modal-body">
                     <ul class="modal-links">
-                        <li><a href="#">Mon profile</a></li>
+                        <li><a href="../profile.php">Mon profile</a></li>
                         <li><a href="#">Paramètre</a></li>
                         <li><a href="./back/responsable/logout.php">Se déconnecter</a></li>
                     </ul>
+                    </div>
                 </div>
-            </div>
             </div>
     </nav>
 
@@ -127,9 +159,9 @@
             <div class="navbar-nav w-100" style="margin-top: 25px">
                 <ul>
                     <li><a href="../home.php" class="nav-link">Accueil</a></li>
-                    <li><a href="../classes" class="nav-link active">Classes</a></li>
+                    <li><a href="../classes" class="nav-link ">Classes</a></li>
                     <li><a href="./inscription.php" class="nav-link">Inscription</a></li>
-                    <li><a href="./" class="nav-link">Matières</a></li>
+                    <li><a href="./" class="nav-link active">Matières</a></li>
                     <li><a href="index.php" class="nav-link">Bulletins</a></li>
                 </ul>
             </div>
@@ -156,32 +188,17 @@
                     <div class="d-block w-100">
                         <div class="items">
                             <!-- Vérifie si des classes existent -->
-                            <?php if (count($classes) > 0):  ?>
+                            <?php if (count($matieres) > 0):  ?>
                                 <!-- Boucle sur les classes et les affiche sous forme de cartes -->
-                                <?php  foreach ( $classes as $classe ): 
-                                    $sql_eleves = "SELECT COUNT(eleve_id), eleve_id AS nombre_eleves FROM eleves WHERE classe_id = ?";
-
-                                    $stmt_eleves = $pdo->prepare($sql_eleves);
-                                    $stmt_eleves->execute([$classe['classe_id']]);
-                                    $eleves = $stmt_eleves->fetchAll();
-
-
-                                ?>
-                                    <a href="./eleves.php?id=<?php echo $classe['classe_id'] ?>">
+                                <?php  foreach ( $matieres as $matiere ): ?>
+                                    <a href="#">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="card-title">
-                                                    <h3>Classe: <?= $classe['nom_classe'] ?></h3>
-
-                                                    
-                                                    <?php  foreach ( $eleves as $eleve ): ?>
-                                                        <?php if ( $eleve['nombre_eleves'] > 0):  ?>
-                                                            <h4>Effectifs: <?= $eleve['nombre_eleves'] ?></h4> <!-- Valeur statique ici, à adapter dynamiquement si nécessaire -->
-                                                            <?php else: ?>
-                                                        <!-- Message si aucune classe trouvée -->
-                                                            <h4>Effectifs: 0</h4>
-                                                        <?php endif; ?>
-                                                    <?php  endforeach; ?>
+                                                    <h3><?= $matiere['nom_matiere'] ?></h3>
+                    
+                                                    <h4>Coefficients: <?= $matiere['coefficient'] ?></h4> <!-- Valeur statique ici, à adapter dynamiquement si nécessaire -->
+                            
                                                 </div>
                                             </div>
                                         </div>
@@ -189,12 +206,12 @@
                                 <?php  endforeach; ?>
                             <?php else: ?>
                                 <!-- Message si aucune classe trouvée -->
-                                <h5>Aucun classe trouvé</h5>
+                                <h5>Aucun matière trouvé</h5>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
         </div>
 
         <!-- Script pour afficher le modal d'ajout avec animation -->

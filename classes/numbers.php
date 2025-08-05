@@ -9,7 +9,12 @@
         exit();
     }
 
+
     $id_classe = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+
+    if ($_SESSION['compte'] !== "Surveillant") {
+        header("Location: eleves" . ".php" . "?" . "id" . "=" . $id_classe);
+    }
 
     $sql_classes = "SELECT * FROM classes WHERE classe_id = ? ";
     $stmt_classes = $pdo->prepare($sql_classes);
@@ -20,6 +25,12 @@
     $stmt_eleves = $pdo->prepare($sql_eleves);
     $stmt_eleves->execute([$id_classe]);
     $eleves = $stmt_eleves->fetchAll();
+
+     // Récupérer un compte
+     $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+     $stmt_compte = $pdo->prepare($sql_compte);
+     $stmt_compte->execute([$_SESSION['responsable_id']]);
+     $comptes = $stmt_compte->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -56,31 +67,47 @@
             <h3 style="font-size: 20px">Ecole</h3>
         </a>
         <div class="menu">
-        <button class="btn-menu" id="menu">
-            M
-        </button>
+            <?php foreach ( $comptes as $compte ): ?>
+                <button class="btn-menu" id="menu">
+                    <?php if (!empty($compte['image'])): ?>
+                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <?php else: ?>
+                        M
+                    <?php endif; ?>
+                </button>
+
+            <?php endforeach; ?>   
         <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
         </div>
         <div class="menu-modal">
-                <div class="modal-top">
-                    <div class="tp-image">
-                        <div class="image">
-                            Image
-                        </div>
-                        
-                    </div>
-                    <div class="tp-name">
-                        <h4><?= $_SESSION['username'] ?></h4>
-                    </div>
-                    <div class="tp-compte">
-                        <h4>Compte: <?= $_SESSION['compte'] ?></h4>
-                    </div>
+            <div class="modal-top">
+                <div class="tp-image">
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <div class="image">
+                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                            </div>
+                            <?php else: ?>
+                                <div class="image">
+                                    Image
+                                </div>
+                        <?php endif; ?>
+                       
+                    <?php endforeach; ?>
+                    
                 </div>
-                <div class="modal-body">
+                <div class="tp-name">
+                    <h4><?= $_SESSION['username'] ?></h4>
+                </div>
+                <div class="tp-compte">
+                    <h4>Compte: <?= $_SESSION['compte'] ?></h4>
+                </div>
+            </div>
+            <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="#">Mon profile</a>
+                            <a href="../profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -89,7 +116,7 @@
                             <a href="../back/responsable/logout.php">Se déconnecter</a>
                         </li>
                     </ul>
-                </div>
+            </div>
         </div>
         </div>
     </nav>
@@ -115,10 +142,10 @@
                             <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link active">Numéros</a>
                         </li>
                         <li>
-                            <a href="./absences.html" class="nav-link">Absences</a>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
                         </li>
                         <li>
-                            <a href="./matieres.html" class="nav-link">Matières</a>
+                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
                         </li>
                         <li>
                             <a href="./notes.html" class="nav-link">Notes</a>

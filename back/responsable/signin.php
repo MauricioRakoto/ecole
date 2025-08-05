@@ -21,7 +21,7 @@
             $_SESSION['prenom_responsable'] = $user['prenom_responsable'];
             $_SESSION['compte'] = $user['compte'];
 
-            header('refresh:2;url=../../home.php'); // redirection vers un tableau de bord
+            header('Location:../../home'. '.php'); // redirection vers un tableau de bord
             exit();
         } else {
             echo "<p style='color:red;'>Identifiants incorrects.</p>";

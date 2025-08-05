@@ -15,6 +15,12 @@
     // Récupération de l'ID de la classe depuis l'URL (GET)
     $id_classe = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
+    // Récupérer un compte
+    $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+    $stmt_compte = $pdo->prepare($sql_compte);
+    $stmt_compte->execute([$_SESSION['responsable_id']]);
+    $comptes = $stmt_compte->fetchAll();
+
     // Requête pour récupérer les informations de la classe
     $sql_classes = "SELECT * FROM classes WHERE classe_id = ? ";
     $stmt_classes = $pdo->prepare($sql_classes);
@@ -22,22 +28,19 @@
     $classes = $stmt_classes->fetchAll();
 
     // Requête pour récupérer les élèves de la classe
-    $sql_cours = "SELECT a.*,
-                        b.*
-                FROM cours a
-                LEFT JOIN matieres b
-                ON a.matiere_id = b.matiere_id
-                WHERE a.classe_id = ?               
+    $sql_eleves = "SELECT 
+                    eleve_id, numero, 
+                    nom_eleve, 
+                    prenom_eleve, 
+                    sexe_eleve,
+                    status 
+                    FROM eleves 
+                    WHERE classe_id = ? 
+                    ORDER BY eleve_id ASC
     ";
-    $stmt_cours = $pdo->prepare($sql_cours);
-    $stmt_cours->execute([$id_classe]);
-    $cours = $stmt_cours->fetchAll();
-
-    // Récupérer un compte
-    $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
-    $stmt_compte = $pdo->prepare($sql_compte);
-    $stmt_compte->execute([$_SESSION['responsable_id']]);
-    $comptes = $stmt_compte->fetchAll();
+    $stmt_eleves = $pdo->prepare($sql_eleves);
+    $stmt_eleves->execute([$id_classe]);
+    $eleves = $stmt_eleves->fetchAll();
 ?>
 
 
@@ -66,27 +69,27 @@
 
         table th:nth-child(3),
         table td:nth-child(3) {
-            width: 5%;
+            width: 35%;
         }
 
-        .links {
-            display: flex;
-            gap: 10px;
-        }
-
-        a.btn-data {
-            width: 90px;
-            height: 30px;
+        a.btn-renvoyer {
+            width: 100px;
+            height: 35px;
             background: #d3cad9;
             transition: 1s ease-in-out;
             color: black;
-            font-size: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+
         }
 
-        a.btn-data:hover {
+        a.btn-effacer {
+            width: 100px;
+            height: 35px;
+            background: #f34040;
+            transition: 1s ease-in-out;
+            color: black;
+        }
+
+        a.btn-renvoyer:hover {
             background: #009cff;
         }
     </style>
@@ -96,26 +99,26 @@
         <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
             <!-- Logo et nom -->
             <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
-            <h3 style="font-size: 20px">Ecole</h3>
+                <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
+                <h3 style="font-size: 20px">Ecole</h3>
             </a>
 
             <!-- Menu utilisateur -->
             <div class="menu">
-                <?php foreach ( $comptes as $compte ): ?>
-                    <button class="btn-menu" id="menu">
-                        <?php if (!empty($compte['image'])): ?>
-                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                        <?php else: ?>
-                            M
-                        <?php endif; ?>
-                    </button>
+            <?php foreach ( $comptes as $compte ): ?>
+                <button class="btn-menu" id="menu">
+                    <?php if (!empty($compte['image'])): ?>
+                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <?php else: ?>
+                        M
+                    <?php endif; ?>
+                </button>
 
-                <?php endforeach; ?>  
-                <div class="menu-name">
+            <?php endforeach; ?>   
+            <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
-                </div>
-                <div class="menu-modal">
+            </div>
+            <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
                         <?php foreach ( $comptes as $compte ): ?>
@@ -129,7 +132,7 @@
                                     </div>
                             <?php endif; ?>
                        
-                            <?php endforeach; ?>
+                        <?php endforeach; ?>
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -153,7 +156,7 @@
                         </li>
                     </ul>
                 </div>
-                </div>
+            </div>
             </div>
         </nav>
 
@@ -162,16 +165,16 @@
             <!-- Barre latérale avec les liens du menu -->
             <div class="sidebar" style="width: 200px; padding: 0 20px;">
                 <nav class="navbar bg-light">
-                <div class="navbar-nav w-100" style="margin-top: 25px">
-                    <div class="nav-top">
+                    <div class="navbar-nav w-100" style="margin-top: 25px">
+                        <div class="nav-top">
                         <div class="nav-l">
                             <h3>Classe</h3>
                         </div>
                         <div class="nav-r">
                             <a class="df-jc-ac" href="./">X</a>
                         </div>
-                    </div>
-                    <ul>
+                        </div>
+                        <ul>
                         <!-- Liens vers les différentes pages liées à la classe -->
                         <li>
                             <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
@@ -185,102 +188,96 @@
                             <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
                         </li>
                         <li>
-                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link active">Cours</a>
+                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
                         </li>
                         <li>
                             <a href="./notes.html" class="nav-link">Notes</a>
                         </li>
-                        <li><a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a></li>
+                        <li>
+                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link active">Renvoyer</a>
+                        </li>
                         <li><a href="index.php" class="nav-link">Bulletins</a></li>
-                    </ul>
-                </div>
+                        </ul>
+                    </div>
                 </nav>
             </div>
 
             <div class="col-right">
             <?php if (count($classes) > 0):  ?>
-                <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
-                    <div class="tp">
-                        <div class="add notes">
-                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
-                            <a href="./addcours.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
-                        </div>
+
+                <div class="tp">
+                    <div class="add notes">
+                        <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="btn-add">Listes</a>
+                        <a href="./addrenvoyer.php?id=<?php echo $id_classe ?>" class="btn-add active">Nouveaux</a>
+                    </div>
+                    <div class="search">
+                        <form action="">
+                            <input type="text" placeholder="Rechercher">
+                            <button type="submit">Rechercher</button>
+                        </form>
                     
                     </div>
-                <?php endif; ?>
+                </div>
 
-                <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
-
-                    <div class="col-classe-l" style="margin-top: 20px;">
+                <div class="col-classe-l" style="margin-top: 20px;">
                     <?php foreach ( $classes as $classe ): ?>
                         <!-- Informations générales de la classe -->
-                        <h1>Cours dans la Classe <?php echo $classe['nom_classe'] ?></h1>
+                        <h1>Renvoyer des élèves dans la Classe <?php echo $classe['nom_classe'] ?></h1>
                         <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
                         <h3>Salle: <?php echo $classe['salle'] ?></h3>
                     <?php endforeach; ?>
-                   
-                    </div>
-                <?php else: ?>
-                    <div class="col-classe-l">
-                    <?php foreach ( $classes as $classe ): ?>
-                        <!-- Informations générales de la classe -->
-                        <h1>Cours dans la Classe <?php echo $classe['nom_classe'] ?></h1>
-                        <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                        <h3>Salle: <?php echo $classe['salle'] ?></h3>
-                    <?php endforeach; ?>
-                   
-                    </div>
-                <?php endif; ?>
+                </div>
 
                 <div class="bd">
-                    <?php if (count($cours) > 0):  ?>
+                    <?php if (count($eleves) > 0):  ?>
                         <!-- Affichage de la liste des élèves -->
                         <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th class="col">#</th>
-                                    <th class="col">Matière</th>
-                                    <th class="col">Coefficent</th>
-                                    <th class="col"></th>
+                                    <th class="col">Matricule</th>
+                                    <th class="col">Nom & Prénom</th>
+                                    <th class="col">Sexe</th>
+                                    <th class="col">Options</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ( $cours as $cour ): ?>
+                                <?php foreach ( $eleves as $eleve ): ?>
                                     <tr>
                                         <!-- Numéro attribué -->
                                         <th scope="row">
-                                            <?= $cour['cours_id'] ?>
+                                            <?php echo $eleve['numero'] ?>
                                         </th>
                                         <!-- ID élève -->
                                         <td>
-                                            <?= $cour['nom_matiere'] ?>
+                                            <?php echo $eleve['eleve_id'] ?>
                                         </td>
                                         <!-- Nom complet -->
                                         <td>
-                                            <?= $cour['coefficient'] ?>
+                                            <?php echo $eleve['nom_eleve'] ?>
+                                            <?php echo $eleve['prenom_eleve'] ?>
+                                        </td>
+                                        <!-- Sexe -->
+                                        <td>
+                                            <?php echo $eleve['sexe_eleve'] ?>
                                         </td>
                                         <td>
-                                            <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
-                                                <div class="links">
-                                                    <a href="./editcours.php?id=<?= $id_classe ?>&&idc=<?= $cour['cours_id'] ?>" class="btn btn-data">Modifier</a>
-                                                    <a href="../back/cours/deleteCours.php?id=<?= $cour['cours_id'] ?>&&idc=<?= $id_classe ?>" class="btn btn-data">Supprimer</a>
-                                                </div>
-                                            <?php endif; ?>
+                                        <?php if ($eleve['status'] == "renvoyer"):  ?>
+                                            <a href="../back/eleves/deleteRenvoyer.php?id=<?= $eleve['eleve_id'] ?>&idc=<?= $id_classe ?>" class="btn btn-effacer">Effacer</a>
+                                            <?php else: ?>
+                                                <a href="../back/eleves/addRenvoyer.php?id=<?= $eleve['eleve_id'] ?>&idc=<?= $id_classe ?>" class="btn btn-renvoyer">Ajouter</a>
+                                        <?php endif; ?>
                                         </td>
-                                        
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     <?php else: ?>
                         <!-- Message si aucun élève -->
-                        <h5>Aucun matière trouvé</h5>
+                        <h5>Aucun élève trouvé</h5>
                     <?php endif; ?>
                 </div>
-                            <!-- Bouton pour imprimer la liste de la classe -->
-                            <div class="bt">
-                    <a href="./printclasse.php?id=<?php echo $id_classe ?>" class="btn btn-print">Imprimer</a>
-                </div>
+                       
             <?php else: ?>
                 <!-- Message si aucune classe trouvée -->
                 <h5>Aucun classe trouvé</h5>

@@ -74,10 +74,10 @@
 
         <!-- Formulaire modal pour l'ajout de nouvelle classe -->
         <div class="modal-add">
-        <form action="../back/cours/addCours.php" class="add-content" method="POST" style="height: 250px;">
+        <form action="../back/cours/updateCours.php?id=<?= $_GET['idc']?>" class="add-content" method="POST" style="height: 250px;">
             <div class="tp-add">
                 <div class="ttl">
-                    <h1>Ajouter un cours</h1>
+                    <h1>Modifier un cours</h1>
                 </div>
                 <div class="close">
                     <a href="./cours.php?id=<?php echo $id_classe ?>">X</a>
@@ -115,7 +115,7 @@
                 
                 <!-- Bouton de soumission du formulaire -->
                 <div class="form-submit">
-                    <button type="submit" name="enregistrer">Terminer</button>
+                    <button type="submit" name="modifier">Terminer</button>
                 </div>
             </div>
         </form>

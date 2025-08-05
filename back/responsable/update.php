@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['username'] = $username;
     $_SESSION['compte'] = $compte;
 
-    header("Location: ".$_SERVER['PHP_SELF']); // Recharge la page
+    header("Location: ../../home" . ".php"); // Recharge la page
     exit();
 }
 

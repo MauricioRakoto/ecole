@@ -48,6 +48,12 @@
     $stmt_eleves = $pdo->prepare($sql_eleves);
     $stmt_eleves->execute([$id_classe]);
     $eleves = $stmt_eleves->fetchAll();
+
+     // Récupérer un compte
+     $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+     $stmt_compte = $pdo->prepare($sql_compte);
+     $stmt_compte->execute([$_SESSION['responsable_id']]);
+     $comptes = $stmt_compte->fetchAll();
 ?>
 
 
@@ -80,24 +86,40 @@
         <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
             <!-- Logo et nom -->
             <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
-            <h3 style="font-size: 20px">Ecole</h3>
+                <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
+                <h3 style="font-size: 20px">Ecole</h3>
             </a>
 
             <!-- Menu utilisateur -->
             <div class="menu">
-            <button class="btn-menu" id="menu">
-                M
-            </button>
-            <div class="menu-name">
+                <?php foreach ( $comptes as $compte ): ?>
+                    <button class="btn-menu" id="menu">
+                        <?php if (!empty($compte['image'])): ?>
+                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                        <?php else: ?>
+                            M
+                        <?php endif; ?>
+                    </button>
+
+                <?php endforeach; ?> 
+                <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
-            </div>
-            <div class="menu-modal">
+                </div>
+                <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                        <div class="image">
-                            Image
-                        </div>
+                        <?php foreach ( $comptes as $compte ): ?>
+                            <?php if (!empty($compte['image'])): ?>
+                                <div class="image">
+                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                </div>
+                                <?php else: ?>
+                                    <div class="image">
+                                        Image
+                                    </div>
+                            <?php endif; ?>
+                       
+                        <?php endforeach; ?>
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -111,7 +133,7 @@
                 <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="#">Mon profile</a>
+                            <a href="../profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -121,7 +143,7 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+                </div>
             </div>
         </nav>
 
@@ -148,7 +170,7 @@
                             <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
                         </li>
                         <li>
-                            <a href="./absences.html" class="nav-link active">Absences</a>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link active">Absences</a>
                         </li>
                         <li>
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
@@ -202,8 +224,8 @@
                                     <div class="form-group">
                                         <div class="label">
                                             <h3>Matière</h3>
-                                                                </div>
-                                                                <div class="select">  
+                                        </div>
+                                        <div class="select">  
                                             <?php if (count($cours) > 0): ?>
                                                 <select name="matiere_id" required>
                                                     <?php foreach ($cours as $cour): ?>
@@ -216,15 +238,19 @@
                                         </div>
                                     </div>
 
+                                    <!-- Get Id matière -->
+                                    <input type="hidden" name="classe_id" value="<?= $id_classe ?>">
+                                    
+
                                     <!-- Date d'absence global -->
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <div class="label">
                                             <h4>Date d'absence</h4>
                                         </div>
                                         <div class="input">
                                             <input type="date" name="date" required>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <!-- Tableau des élèves -->
                                     <table class="table table-hover">

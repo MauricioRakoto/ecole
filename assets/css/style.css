@@ -333,11 +333,15 @@
     gap: 10px;
 }
 
-.navbar.navbar-expand .menu button.btn-menu {
+/* .navbar.navbar-expand .menu button.btn-menu img {
     width: 30px;
     height: 30px;
-    background: #d3cad9;
-    border: 0;
+    border-radius: 50%;
+} */
+
+.navbar.navbar-expand .menu button.btn-menu img {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
 }
 
@@ -376,14 +380,16 @@
     margin-bottom: 10px;
 }
 
-.navbar.navbar-expand .menu .menu-modal .modal-top .tp-image .image {
+/* .navbar.navbar-expand .menu .menu-modal .modal-top .tp-image .image img {
     width: 50px;
     height: 50px;
-    background: #d3cad9;
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+} */
+
+.navbar.navbar-expand .menu .menu-modal .modal-top .tp-image img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
 }
 
 .navbar.navbar-expand .menu .menu-modal .modal-top .tp-name {
@@ -1065,3 +1071,4 @@
 .profile .profile-body .edit .form-submit button:hover {
     background: #009cff;
 }
+

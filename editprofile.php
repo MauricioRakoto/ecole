@@ -63,7 +63,7 @@
 
                         <div class="form-group">
                             <div class="label">
-                                <h4>Nouvelle Photo</h4>
+                                <h4>Modifier Photo</h4>
                             </div>
                             <div class="input">
                                 <input type="file" name="image" >
@@ -114,8 +114,9 @@
                         </div>
                         </div>
 
-                        <div class="form-submit">
-                        <button type="submit">Modifier</button>
+                        <div class="form-submit" style="display: flex; gap: 10px">
+                            <button type="submit">Modifier</button>
+                            <a href="./home.php">Retour</a>
                         </div>
                     <?php endforeach; ?>
 

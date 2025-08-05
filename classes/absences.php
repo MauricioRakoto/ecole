@@ -21,7 +21,7 @@
     $stmt_classes->execute([$id_classe]);
     $classes = $stmt_classes->fetchAll();
 
-    // Requête pour récupérer les élèves de la classe
+    // Requête pour récupérer les cours de la classe
     $sql_cours = "SELECT a.*,
                         b.*
                 FROM cours a
@@ -33,6 +33,36 @@
     $stmt_cours = $pdo->prepare($sql_cours);
     $stmt_cours->execute([$id_classe]);
     $cours = $stmt_cours->fetchAll();
+
+    // Requête pour récupérer les absences de la classe
+    $sql_absences = "SELECT a.*,
+                        b.*
+                FROM cours a
+                LEFT JOIN matieres b
+                ON a.matiere_id = b.matiere_id
+                WHERE a.classe_id = ?               
+    ";
+    
+    $stmt_cours = $pdo->prepare($sql_cours);
+    $stmt_cours->execute([$id_classe]);
+    $cours = $stmt_cours->fetchAll();
+
+    // Récupérer un compte
+    $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+    $stmt_compte = $pdo->prepare($sql_compte);
+    $stmt_compte->execute([$_SESSION['responsable_id']]);
+    $comptes = $stmt_compte->fetchAll();
+
+    // Récupérer un compte
+    $date_today = date("Y-m-d");
+    $sql_absences = "SELECT * FROM absences WHERE date_absence = ? AND classe_id = ?";
+    $stmt_absences = $pdo->prepare($sql_absences);
+    $stmt_absences->execute([
+        $date_today,
+        $id_classe
+    ]);
+
+    $absences = $stmt_absences->fetchAll();
 ?>
 
 
@@ -71,32 +101,48 @@
 
             <!-- Menu utilisateur -->
             <div class="menu">
-            <button class="btn-menu" id="menu">
-                M
-            </button>
-            <div class="menu-name">
+                <?php foreach ( $comptes as $compte ): ?>
+                    <button class="btn-menu" id="menu">
+                        <?php if (!empty($compte['image'])): ?>
+                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                        <?php else: ?>
+                            M
+                        <?php endif; ?>
+                    </button>
+
+                <?php endforeach; ?>  
+                <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
-            </div>
-            <div class="menu-modal">
-                <div class="modal-top">
-                    <div class="tp-image">
-                        <div class="image">
-                            Image
+                </div>
+                <div class="menu-modal">
+                    <div class="modal-top">
+                        <div class="tp-image">
+                        <?php foreach ( $comptes as $compte ): ?>
+                            <?php if (!empty($compte['image'])): ?>
+                                <div class="image">
+                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                </div>
+                                <?php else: ?>
+                                    <div class="image">
+                                        Image
+                                    </div>
+                            <?php endif; ?>
+                       
+                        <?php endforeach; ?>
+                        </div>
+                        <div class="tp-name">
+                            <h4><?= $_SESSION['username'] ?></h4>
+                        </div>
+                        <div class="tp-compte">
+                            <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                         </div>
                     </div>
-                    <div class="tp-name">
-                        <h4><?= $_SESSION['username'] ?></h4>
-                    </div>
-                    <div class="tp-compte">
-                        <h4>Compte: <?= $_SESSION['compte'] ?></h4>
-                    </div>
-                </div>
 
-                <!-- Liens vers les options du menu utilisateur -->
-                <div class="modal-body">
+                    <!-- Liens vers les options du menu utilisateur -->
+                    <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="#">Mon profile</a>
+                            <a href="">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -105,8 +151,8 @@
                             <a href="../back/responsable/logout.php">Se déconnecter</a>
                         </li>
                     </ul>
+                    </div>
                 </div>
-            </div>
             </div>
         </nav>
 
@@ -129,11 +175,13 @@
                         <li>
                             <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
                         </li>
+                        <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
+                            <li>
+                                <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
+                            </li>
+                        <?php endif; ?>
                         <li>
-                            <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
-                        </li>
-                        <li>
-                            <a href="./absences.html" class="nav-link active">Absences</a>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link active">Absences</a>
                         </li>
                         <li>
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
@@ -185,7 +233,7 @@
                 </div>
 
                 <div class="bd">
-                    <?php if (count($cours) > 0):  ?>
+                    <?php if (count($absences) > 0):  ?>
                         <!-- Affichage de la liste des élèves -->
                         <table class="table table-hover">
                             <thead>
@@ -194,31 +242,66 @@
                                     <th class="col">Matricule</th>
                                     <th class="col">Nom & Prénom</th>
                                     <th class="col">Sexe</th>
-                                    <th class="col">Heure</th>
+                                    <th class="col">Minutes</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ( $cours as $cour ): ?>
+                                <?php foreach ( $absences as $absence ): 
+                                    
+                                    // Requête pour récupérer les absences de la classe
+                                    $sql_eleves = "SELECT eleve_id,
+                                                        numero,
+                                                        nom_eleve,
+                                                        prenom_eleve,
+                                                        sexe_eleve
+                                                    FROM eleves
+                                                    WHERE eleve_id = ?               
+                                    ";
+
+                                    $stmt_eleves = $pdo->prepare($sql_eleves);
+                                    $stmt_eleves->execute(
+                                        [
+                                            $absence['eleve_id']
+                                            ]
+                                    );
+                                    $eleves = $stmt_eleves->fetchAll();
+                                    
+                                    ?>
                                     <tr>
-                                        <!-- Numéro attribué -->
-                                        <th scope="row">
-                                            <?= $cour['cours_id'] ?>
-                                        </th>
-                                        <!-- ID élève -->
-                                        <td>
-                                            <?= $cour['nom_matiere'] ?>
-                                        </td>
+                                        <?php foreach ( $eleves as $eleve ): ?>
+                                            <!-- Numéro attribué -->
+                                            <th scope="row">
+                                                <?= $eleve['numero'] ?>
+                                            </th>
+
+                                             <!-- ID élève -->
+                                            <td>
+                                                <?= $eleve['eleve_id'] ?>
+                                            </td>
+
+                                            <!-- Nom et Prénom élève -->
+                                            <td>
+                                                <?= $eleve['nom_eleve'] ?>
+                                                <?= $eleve['prenom_eleve'] ?>
+                                            </td>
+
+                                             <!-- Sexe -->
+                                             <td>
+                                                <?= $eleve['sexe_eleve'] ?>
+                                            </td>
+                                        <?php endforeach; ?>
+                                       
                                         <!-- Nom complet -->
                                         <td>
-                                            <?= $cour['coefficient'] ?>
+                                            <?= $absence['minutes'] ?> min
                                         </td>
-                                        <td>
+                                        <!-- <td>
                                             <div class="links">
                                                 <a href="#" class="btn btn-print">Modifier</a>
                                                 <a href="#" class="btn btn-print">Supprimer</a>
                                             </div>
                                             
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

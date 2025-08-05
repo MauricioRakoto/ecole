@@ -27,7 +27,7 @@ if (isset($_POST['enregistrer'])) {
         echo "
             <div style='color: green; margin-top: 20px;'>
                 Cours ajouté avec succès.
-                <br><a href='add-cours.php'>Retour</a>
+                <br><a href='../../classes/addcours.php?id=". $classe_id ."'>Retour</a>
             </div>
         ";
     }

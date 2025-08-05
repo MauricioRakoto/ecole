@@ -10,11 +10,19 @@
         header("Location: signin.php");
         exit();
     }
+
+    
     
     // Récupération des classes depuis la base de données
     $sql = "SELECT classe_id, nom_classe FROM classes";
     $stmt_classes = $pdo->query($sql);
     $classes = $stmt_classes->fetchAll();
+
+    // Récupérer un compte
+    $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+    $stmt_compte = $pdo->prepare($sql_compte);
+    $stmt_compte->execute([$_SESSION['responsable_id']]);
+    $comptes = $stmt_compte->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +52,16 @@
 
         <!-- Menu utilisateur avec nom et options -->
         <div class="menu">
-            <button class="btn-menu" id="menu"> M </button>
+            <?php foreach ( $comptes as $compte ): ?>
+                <button class="btn-menu" id="menu">
+                    <?php if (!empty($compte['image'])): ?>
+                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <?php else: ?>
+                        M
+                    <?php endif; ?>
+                </button>
+
+            <?php endforeach; ?>   
             <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
             </div>
@@ -53,7 +70,18 @@
             <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                        <div class="image">Image</div>
+                        <?php foreach ( $comptes as $compte ): ?>
+                            <?php if (!empty($compte['image'])): ?>
+                                <div class="image">
+                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                </div>
+                                <?php else: ?>
+                                    <div class="image">
+                                        Image
+                                    </div>
+                            <?php endif; ?>
+                       
+                        <?php endforeach; ?>
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -65,9 +93,15 @@
 
                 <div class="modal-body">
                     <ul class="modal-links">
-                        <li><a href="#">Mon profile</a></li>
-                        <li><a href="#">Paramètre</a></li>
-                        <li><a href="../back/responsable/logout.php">Se déconnecter</a></li>
+                        <li>
+                            <a href="../profile.php">Mon profile</a>
+                        </li>
+                        <li>
+                            <a href="#">Paramètre</a>
+                        </li>
+                        <li>
+                            <a href="../back/responsable/logout.php">Se déconnecter</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -82,11 +116,23 @@
             <nav class="navbar bg-light">
                 <div class="navbar-nav w-100" style="margin-top: 25px">
                     <ul>
-                        <li><a href="../home.php" class="nav-link">Accueil</a></li>
-                        <li><a href="./" class="nav-link active">Classes</a></li>
-                        <li><a href="../inscription.php" class="nav-link">Inscription</a></li>
-                        <li><a href="../matieres/" class="nav-link">Matières</a></li>
-                        <li><a href="#" class="nav-link">Bulletins</a></li>
+                        <li>
+                            <a href="../home.php" class="nav-link">Accueil</a>
+                        </li>
+                        <li>
+                            <a href="./" class="nav-link active">Classes</a>
+                        </li>
+                        <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
+                            <li>
+                                <a href="../inscription.php" class="nav-link">Inscription</a>
+                            </li>
+                            <li>
+                                <a href="../matieres/" class="nav-link">Matières</a>
+                            </li>
+                        <?php endif; ?>
+                        <li>
+                            <a href="#" class="nav-link">Bulletins</a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -96,9 +142,11 @@
         <div class="col-right">
             <!-- Barre supérieure avec bouton "Nouveau" et formulaire de recherche -->
             <div class="tp">
-                <div class="add">
-                    <a href="./add.php" class="btn-add">Nouveau</a>
-                </div>
+                <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
+                    <div class="add">
+                        <a href="./add.php" class="btn-add">Nouveau</a>
+                    </div>
+                <?php endif; ?>
                 <div class="search">
                     <form action="">
                         <input type="text" placeholder="Rechercher">

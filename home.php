@@ -50,12 +50,15 @@
                         <li>
                             <a href="./classes/" class="nav-link">Classes</a>
                         </li>
-                        <li>
-                            <a href="./inscription.php" class="nav-link">Inscription</a>
-                        </li>
-                        <li>
-                            <a href="./matieres/" class="nav-link">Matières</a>
-                        </li>
+                        <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
+                            <li>
+                                <a href="./inscription.php" class="nav-link">Inscription</a>
+                            </li>
+                            <li>
+                                <a href="./matieres/" class="nav-link">Matières</a>
+                            </li>
+                        <?php endif; ?>
+                        
                         <li>
                             <a href="index.php" class="nav-link">Bulletins</a>
                         </li>

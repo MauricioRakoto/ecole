@@ -15,6 +15,12 @@
     // Récupération de l'ID de la classe depuis l'URL (GET)
     $id_classe = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
+    // Récupérer un compte
+    $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+    $stmt_compte = $pdo->prepare($sql_compte);
+    $stmt_compte->execute([$_SESSION['responsable_id']]);
+    $comptes = $stmt_compte->fetchAll();
+
     // Requête pour récupérer les informations de la classe
     $sql_classes = "SELECT * FROM classes WHERE classe_id = ? ";
     $stmt_classes = $pdo->prepare($sql_classes);
@@ -69,18 +75,34 @@
 
         <!-- Menu utilisateur -->
         <div class="menu">
-            <button class="btn-menu" id="menu">
-                M
-            </button>
+            <?php foreach ( $comptes as $compte ): ?>
+                <button class="btn-menu" id="menu">
+                    <?php if (!empty($compte['image'])): ?>
+                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <?php else: ?>
+                        M
+                    <?php endif; ?>
+                </button>
+
+            <?php endforeach; ?>   
             <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
             </div>
             <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                        <div class="image">
-                            Image
-                        </div>
+                        <?php foreach ( $comptes as $compte ): ?>
+                            <?php if (!empty($compte['image'])): ?>
+                                <div class="image">
+                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                </div>
+                                <?php else: ?>
+                                    <div class="image">
+                                        Image
+                                    </div>
+                            <?php endif; ?>
+                       
+                        <?php endforeach; ?>
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -94,7 +116,7 @@
                 <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="#">Mon profile</a>
+                            <a href="../profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -127,9 +149,11 @@
                         <li>
                             <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link active">Eleves</a>
                         </li>
-                        <li>
-                            <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
-                        </li>
+                        <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
+                            <li>
+                                <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
+                            </li>
+                        <?php endif; ?>
                         <li>
                             <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
                         </li>
@@ -140,7 +164,7 @@
                             <a href="./notes.html" class="nav-link">Notes</a>
                         </li>
                         <li>
-                            <a href="./renvoyer.html" class="nav-link">Renvoyer</a>
+                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a>
                         </li>
                         <li><a href="index.php" class="nav-link">Bulletins</a></li>
                     </ul>

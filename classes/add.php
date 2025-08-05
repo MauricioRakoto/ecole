@@ -12,10 +12,20 @@
         exit();
     }
 
+    if ($_SESSION['compte'] !== "Surveillant") {
+        header("Location: ../classes/");
+    }
+
      // Récupération des classes depuis la base de données
     $sql = "SELECT classe_id, nom_classe FROM classes";
     $stmt_classes = $pdo->query($sql);
     $classes = $stmt_classes->fetchAll();
+
+      // Récupérer un compte
+      $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
+      $stmt_compte = $pdo->prepare($sql_compte);
+      $stmt_compte->execute([$_SESSION['responsable_id']]);
+      $comptes = $stmt_compte->fetchAll();
 ?>
 
 <!-- Début du document HTML -->
@@ -112,9 +122,16 @@
 
             <!-- Menu utilisateur -->
             <div class="menu">
-            <button class="btn-menu" id="menu">
-                M
-            </button>
+                <?php foreach ( $comptes as $compte ): ?>
+                    <button class="btn-menu" id="menu">
+                        <?php if (!empty($compte['image'])): ?>
+                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                        <?php else: ?>
+                            M
+                        <?php endif; ?>
+                    </button>
+
+                <?php endforeach; ?> 
             <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
             </div>
@@ -122,9 +139,18 @@
             <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                        <div class="image">
-                            Image
-                        </div>
+                       <?php foreach ( $comptes as $compte ): ?>
+                            <?php if (!empty($compte['image'])): ?>
+                                <div class="image">
+                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                </div>
+                                <?php else: ?>
+                                    <div class="image">
+                                        Image
+                                    </div>
+                            <?php endif; ?>
+                       
+                        <?php endforeach; ?>
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
