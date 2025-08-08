@@ -44,6 +44,23 @@
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- Inclusion du fichier CSS personnalisé -->
     <link href="../assets/css/style.css" rel="stylesheet">
+    <style>
+         button.icone {
+            border: 0;
+         }
+
+        button.icone img {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+        }
+
+        .photo img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
 
@@ -114,43 +131,40 @@
 
     <!-- Barre de navigation supérieure -->
     <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
-            <!-- Logo et titre -->
-            <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-                <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
-                <h3 style="font-size: 20px">Ecole</h3>
-            </a>
-
-            <!-- Menu utilisateur -->
-            <div class="menu">
-                <?php foreach ( $comptes as $compte ): ?>
-                    <button class="btn-menu" id="menu">
-                        <?php if (!empty($compte['image'])): ?>
-                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                        <?php else: ?>
-                            M
-                        <?php endif; ?>
-                    </button>
-
-                <?php endforeach; ?> 
+        <!-- Logo et titre -->
+        <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
+            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
+            <h3 style="font-size: 20px">Ecole</h3>
+        </a>
+        <!-- Menu utilisateur -->
+        <div class="menu">
+            <?php foreach ( $comptes as $compte ): ?>
+            <button class="icone" id="menu">
+                <?php if (!empty($compte['image'])): ?>
+                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                <?php else: ?>
+                    M
+                <?php endif; ?>
+            </button>
+            <?php endforeach; ?>   
             <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
             </div>
-            <!-- Menu déroulant utilisateur -->
             <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                       <?php foreach ( $comptes as $compte ): ?>
-                            <?php if (!empty($compte['image'])): ?>
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <div class="photo">
+                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                            </div>
+                            <?php else: ?>
                                 <div class="image">
-                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                    M
                                 </div>
-                                <?php else: ?>
-                                    <div class="image">
-                                        Image
-                                    </div>
                             <?php endif; ?>
                        
-                        <?php endforeach; ?>
+                        <?php endforeach; ?>   
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -161,13 +175,19 @@
                 </div>
                 <div class="modal-body">
                     <ul class="modal-links">
-                        <li><a href="#">Mon profile</a></li>
-                        <li><a href="#">Paramètre</a></li>
-                        <li><a href="./back/responsable/logout.php">Se déconnecter</a></li>
+                        <li>
+                            <a href="./profile.php">Mon profile</a>
+                        </li>
+                        <li>
+                            <a href="#">Paramètre</a>
+                        </li>
+                        <li>
+                            <a href="./back/responsable/logout.php">Se déconnecter</a>
+                        </li>
                     </ul>
                 </div>
             </div>
-            </div>
+        </div>
     </nav>
 
         <!-- Conteneur principal -->

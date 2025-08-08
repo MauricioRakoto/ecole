@@ -27,11 +27,55 @@
     $stmt_classes->execute([$id_classe]);
     $classes = $stmt_classes->fetchAll();
 
-    // Requête pour récupérer les élèves de la classe
-    $sql_eleves = "SELECT eleve_id, numero, nom_eleve, prenom_eleve, sexe_eleve FROM eleves WHERE classe_id = ? AND status = 'renvoyer' ORDER BY eleve_id ASC";
-    $stmt_eleves = $pdo->prepare($sql_eleves);
-    $stmt_eleves->execute([$id_classe]);
-    $eleves = $stmt_eleves->fetchAll();
+    // Requête pour récupérer les cours de la classe
+    $sql_cours = "SELECT a.*,
+                        b.*
+                FROM cours a
+                LEFT JOIN matieres b
+                ON a.matiere_id = b.matiere_id
+                WHERE a.classe_id = ?               
+    ";
+    
+    $stmt_cours = $pdo->prepare($sql_cours);
+    $stmt_cours->execute([$id_classe]);
+    $cours = $stmt_cours->fetchAll();
+
+    // Requête pour récupérer les absences de la classe
+    $sql_absences = "SELECT a.*,
+                        b.*
+                FROM cours a
+                LEFT JOIN matieres b
+                ON a.matiere_id = b.matiere_id
+                WHERE a.classe_id = ?               
+    ";
+    
+    $stmt_cours = $pdo->prepare($sql_cours);
+    $stmt_cours->execute([$id_classe]);
+    $cours = $stmt_cours->fetchAll();
+
+    $selectedMatiereId = isset($_POST['matiere_id']) ? intval($_POST['matiere_id']) : ($cours[0] ['matiere_id'] ?? 0);
+
+    if ( $selectedMatiereId ) {
+
+         // Récupérer des absences aujourd'hui
+        $date_today = date("Y-m-d");
+        $sql_absences = "SELECT * FROM absences WHERE date_absence = ? AND classe_id = ? AND matiere_id = ?";
+        $stmt_absences = $pdo->prepare($sql_absences);
+        $stmt_absences->execute([
+            $date_today,
+            $id_classe,
+            $selectedMatiereId
+        ]);
+
+        $absences = $stmt_absences->fetchAll();
+
+         // Récupérer un matiere
+        $sql_matiere = "SELECT nom_matiere FROM matieres WHERE matiere_id = ?";
+        $stmt_matiere = $pdo->prepare($sql_matiere);
+        $stmt_matiere->execute([$selectedMatiereId]);
+        $matieres = $stmt_matiere->fetchAll();
+
+    }
 ?>
 
 
@@ -58,9 +102,25 @@
             width: 1%;
         }
 
-        table th:nth-child(3),
-        table td:nth-child(3) {
-            width: 35%;
+        .links {
+            display: flex;
+            gap: 10px;
+        }
+
+        a.btn-data {
+            width: 90px;
+            height: 30px;
+            background: #d3cad9;
+            transition: 1s ease-in-out;
+            color: black;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a.btn-data:hover {
+            background: #009cff;
         }
 
         button.icone {
@@ -79,6 +139,11 @@
             border-radius: 50%;
         }
     </style>
+    <script>
+        function submitForm() {
+            document.getElementById('classForm').submit();
+        }
+    </script>
 </head>
     <body>
 
@@ -148,16 +213,16 @@
             <!-- Barre latérale avec les liens du menu -->
             <div class="sidebar" style="width: 200px; padding: 0 20px;">
                 <nav class="navbar bg-light">
-                    <div class="navbar-nav w-100" style="margin-top: 25px">
-                        <div class="nav-top">
+                <div class="navbar-nav w-100" style="margin-top: 25px">
+                    <div class="nav-top">
                         <div class="nav-l">
                             <h3>Classe</h3>
                         </div>
                         <div class="nav-r">
                             <a class="df-jc-ac" href="./">X</a>
                         </div>
-                        </div>
-                        <ul>
+                    </div>
+                    <ul>
                         <!-- Liens vers les différentes pages liées à la classe -->
                         <li>
                             <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
@@ -168,7 +233,7 @@
                             </li>
                         <?php endif; ?>
                         <li>
-                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link active">Absences</a>
                         </li>
                         <li>
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
@@ -176,101 +241,34 @@
                         <li>
                             <a href="./notes.html" class="nav-link">Notes</a>
                         </li>
-                        <li>
-                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link active">Renvoyer</a>
-                        </li>
+                        <li><a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a></li>
                         <li><a href="index.php" class="nav-link">Bulletins</a></li>
-                        </ul>
-                    </div>
+                    </ul>
+                </div>
                 </nav>
             </div>
 
             <div class="col-right">
-                <?php if (count($classes) > 0):  ?>
-                    <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
-                        <div class="tp">
-                            <div class="add notes">
-                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
-                            <a href="./addrenvoyer.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
-                            </div>
-                            <div class="search">
-                            <form action="">
-                                <input type="text" placeholder="Rechercher">
-                                <button type="submit">Rechercher</button>
-                            </form>
-
-                            </div>
-                        </div>
-
-                    <?php endif; ?>
-
-                    <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
-
-                        <div class="col-classe-l" style="margin-top: 20px;">
-                            <?php foreach ( $classes as $classe ): ?>
-                                <!-- Informations générales de la classe -->
-                                <h1>Liste renvoyer dans la Classe <?php echo $classe['nom_classe'] ?></h1>
-                                <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                                <h3>Salle: <?php echo $classe['salle'] ?></h3>
-                            <?php endforeach; ?>
-                        </div>
-
-                        <?php else: ?>
-                            <div class="col-classe-l">
-                                <?php foreach ( $classes as $classe ): ?>
-                                    <!-- Informations générales de la classe -->
-                                    <h1>Liste renvoyer dans la Classe <?php echo $classe['nom_classe'] ?></h1>
-                                    <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                                    <h3>Salle: <?php echo $classe['salle'] ?></h3>
-                                <?php endforeach; ?>
-                            </div>
-
-                    <?php endif; ?>
+            <?php if (count($classes) > 0):  
+                $date_today = date("Y-m-d");
+                ?>
+                <div class="tp">
+                    <div class="add notes">
+                        <a href="./absences.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
+                        <a href="./addabsences.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
+                    </div>
                 
-                <div class="bd">
-                    <?php if (count($eleves) > 0):  ?>
-                        <!-- Affichage de la liste des élèves -->
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="col">#</th>
-                                    <th class="col">Matricule</th>
-                                    <th class="col">Nom & Prénom</th>
-                                    <th class="col">Sexe</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ( $eleves as $eleve ): ?>
-                                    <tr>
-                                        <!-- Numéro attribué -->
-                                        <th scope="row">
-                                            <?php echo $eleve['numero'] ?>
-                                        </th>
-                                        <!-- ID élève -->
-                                        <td>
-                                            <?php echo $eleve['eleve_id'] ?>
-                                        </td>
-                                        <!-- Nom complet -->
-                                        <td>
-                                            <?php echo $eleve['nom_eleve'] ?>
-                                            <?php echo $eleve['prenom_eleve'] ?>
-                                        </td>
-                                        <!-- Sexe -->
-                                        <td>
-                                            <?php echo $eleve['sexe_eleve'] ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <!-- Message si aucun élève -->
-                        <h5>Aucun élève renvoyer</h5>
-                    <?php endif; ?>
+                    <div class="search">
+                        <form action="./resultabsence.php" method="POST">
+                            <input type="date" name="date" value="<?= $date_today ?>">
+                            <button type="submit" >Rechercher</button>
+                        </form>
+
+                    </div>
                 </div>
-                            <!-- Bouton pour imprimer la liste de la classe -->
-                            <div class="bt">
-                    <a href="./printclasse.php?id=<?php echo $id_classe ?>" class="btn btn-print">Imprimer</a>
+
+                <div class="bd">
+                    
                 </div>
             <?php else: ?>
                 <!-- Message si aucune classe trouvée -->

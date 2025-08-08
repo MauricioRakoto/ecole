@@ -58,6 +58,22 @@
         table td:nth-child(3) {
             width: 35%;
         }
+
+        button.icone {
+            border: 0;
+         }
+
+        button.icone img {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+        }
+
+        .photo img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -68,56 +84,54 @@
         </a>
         <div class="menu">
             <?php foreach ( $comptes as $compte ): ?>
-                <button class="btn-menu" id="menu">
-                    <?php if (!empty($compte['image'])): ?>
-                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                    <?php else: ?>
-                        M
-                    <?php endif; ?>
-                </button>
-
+            <button class="icone" id="menu">
+                <?php if (!empty($compte['image'])): ?>
+                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                <?php else: ?>
+                    M
+                <?php endif; ?>
+            </button>
             <?php endforeach; ?>   
-        <div class="menu-name">
+            <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
-        </div>
-        <div class="menu-modal">
-            <div class="modal-top">
-                <div class="tp-image">
+            </div>
+            <div class="menu-modal">
+                <div class="modal-top">
+                    <div class="tp-image">
                     <?php foreach ( $comptes as $compte ): ?>
                         <?php if (!empty($compte['image'])): ?>
-                            <div class="image">
+                            <div class="photo">
                                 <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
                             </div>
                             <?php else: ?>
                                 <div class="image">
-                                    Image
+                                    M
                                 </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
                        
-                    <?php endforeach; ?>
-                    
+                        <?php endforeach; ?>   
+                    </div>
+                    <div class="tp-name">
+                        <h4><?= $_SESSION['username'] ?></h4>
+                    </div>
+                    <div class="tp-compte">
+                        <h4>Compte: <?= $_SESSION['compte'] ?></h4>
+                    </div>
                 </div>
-                <div class="tp-name">
-                    <h4><?= $_SESSION['username'] ?></h4>
-                </div>
-                <div class="tp-compte">
-                    <h4>Compte: <?= $_SESSION['compte'] ?></h4>
-                </div>
-            </div>
-            <div class="modal-body">
+                <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="../profile.php">Mon profile</a>
+                            <a href="./profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
                         </li>
                         <li>
-                            <a href="../back/responsable/logout.php">Se déconnecter</a>
+                            <a href="./back/responsable/logout.php">Se déconnecter</a>
                         </li>
                     </ul>
+                </div>
             </div>
-        </div>
         </div>
     </nav>
 
@@ -151,7 +165,7 @@
                             <a href="./notes.html" class="nav-link">Notes</a>
                         </li>
                         <li>
-                            <a href="./renvoyer.html" class="nav-link">Renvoyer</a>
+                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a>
                         </li>
                         <li>
                             <a href="index.php" class="nav-link">Bulletins</a>
@@ -175,21 +189,13 @@
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <div id="carouselExampleIndicators" class="carousel" >
-                    <h3 style="font-size: 16px; font-weight: 500">Mode de saisir</h3>
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1">Automatique</button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" class="" aria-label="Slide 2">Manuel</button>
-                    </div>
+              
+                    
                 <div class="bd">
                     <?php if (count($eleves) > 0):  ?>
-                        
-                        <div class="carousel-inner">
-                                <div class="carousel-item active">
-
-                                    <form action="../back/eleves/editNumeros.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 auto">
-                                    <table class="table table-hover">
-                                        <thead>
+                        <form action="../back/eleves/editNumeros.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 auto">
+                            <table class="table table-hover">
+                                <thead>
                                             <tr>
                                                 <th class="col">#</th>
                                                 <th class="col">Matricule</th>
@@ -197,13 +203,13 @@
                                                 <th class="col">Sexe</th>
                                                 <th class="col">Numéro</th>
                                             </tr>
-                                        </thead>
-                                        <tbody>
+                                </thead>
+                                <tbody>
                                             
                                             <?php foreach ( $eleves as $eleve ): ?>
                                                 <tr>
                                                     <th scope="row">
-                                                    1
+                                                        <?= $eleve['numero'] ?>
                                                     </th>
                                                     <td>
                                                         <?php echo $eleve['eleve_id'] ?>
@@ -222,38 +228,12 @@
                                             
                                             <?php endforeach; ?>
                                         
-                                        </tbody>
-                                    </table>
-                                    <div class="submit">
-                                        <button type="submit" href="./print-classe.html" class="btn btn-primary" name="modifier">Terminer</button>
-                                    </div>
-                                    </form>
-                                </div>
-                                <div class="carousel-item">
-                                <form action="#" method="POST" class="d-block w-100 manuel">
-                                    <div class="form-group">
-                                        <div class="label">
-                                            <h4>Eleves</h4>
-                                        </div>
-                                        <div class="input">
-                                            <input type="text" placeholder="Matricule Eleve">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="label">
-                                            <h4>Numéro</h4>
-                                        </div>
-                                        <div class="input">
-                                            <input type="text" placeholder="N° Eleve">
-                                        </div>
-                                    </div>
-                                    <div class="submit">
-                                        <button type="submit" href="./print-classe.html" class="btn btn-primary">Terminer</button>
-                                    </div>
-                                </form>
-                                </div>
-                        </div>
-                        
+                                </tbody>
+                            </table>
+                            <div class="submit">
+                            <button type="submit" href="./print-classe.html" class="btn btn-primary" name="modifier">Terminer</button>
+                            </div>
+                        </form> 
 
                     <?php else: ?>
                         <h5>Aucun élève trouvé</h5>
@@ -263,10 +243,6 @@
                 <div class="bt">
                     
                 </div>
-            </div>
-               
-
-
                
             <?php else: ?>
                 <h5>Aucun classe trouvé</h5>

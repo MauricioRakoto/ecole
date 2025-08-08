@@ -9,6 +9,8 @@ if (!isset($_SESSION['responsable_id'])) {
 
 $responsable_id = $_SESSION['responsable_id'];
 
+
+
 // Traitement de la soumission du formulaire
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nom = $_POST['nom'];
@@ -16,6 +18,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $compte = $_POST['compte'];
     $image_name = "";
+
+    
 
     // Upload image si un fichier est envoyé
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -27,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $image_name = time() . "_" . basename($_FILES["image"]["name"]);
         $target_file = $target_dir . $image_name;
         move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
+       
     }
 
     // Met à jour les données (et image si fournie)
@@ -56,12 +61,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             WHERE responsable_id = ?
         ";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$nom, $prenom, $username, $compte, $responsable_id]);
+        $stmt->execute([
+            $nom, 
+            $prenom, 
+            $username, 
+            $compte, 
+            $responsable_id
+        ]);
     }
 
     // Mise à jour session
-    $_SESSION['nom'] = $nom;
-    $_SESSION['prenom'] = $prenom;
+    $_SESSION['nom_responsable'] = $nom;
+    $_SESSION['prenom_responsable'] = $prenom;
     $_SESSION['username'] = $username;
     $_SESSION['compte'] = $compte;
 

@@ -68,6 +68,48 @@
         table td:nth-child(2) {
             width: 1%;
         }
+
+        table th:nth-child(3),
+        table td:nth-child(3) {
+            width: 5%;
+        }
+
+        .links {
+            display: flex;
+            gap: 10px;
+        }
+
+        a.btn-data {
+            width: 90px;
+            height: 30px;
+            background: #d3cad9;
+            transition: 1s ease-in-out;
+            color: black;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a.btn-data:hover {
+            background: #009cff;
+        }
+
+        button.icone {
+            border: 0;
+         }
+
+        button.icone img {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+        }
+
+        .photo img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%;
+        }
     </style>
 </head>
     <body>
@@ -131,33 +173,32 @@
             <!-- Menu utilisateur -->
             <div class="menu">
                 <?php foreach ( $comptes as $compte ): ?>
-                    <button class="btn-menu" id="menu">
-                        <?php if (!empty($compte['image'])): ?>
-                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                        <?php else: ?>
-                            M
-                        <?php endif; ?>
+                    <button class="icone" id="menu">
+                    <?php if (!empty($compte['image'])): ?>
+                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <?php else: ?>
+                        M
+                    <?php endif; ?>
                     </button>
-
-                <?php endforeach; ?>  
+                <?php endforeach; ?>   
                 <div class="menu-name">
                     <h4><?= $_SESSION['username'] ?></h4>
                 </div>
                 <div class="menu-modal">
-                <div class="modal-top">
+                    <div class="modal-top">
                     <div class="tp-image">
-                        <?php foreach ( $comptes as $compte ): ?>
-                            <?php if (!empty($compte['image'])): ?>
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <div class="photo">
+                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                            </div>
+                            <?php else: ?>
                                 <div class="image">
-                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                    M
                                 </div>
-                                <?php else: ?>
-                                    <div class="image">
-                                        Image
-                                    </div>
                             <?php endif; ?>
                        
-                            <?php endforeach; ?>
+                        <?php endforeach; ?>   
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -165,13 +206,11 @@
                     <div class="tp-compte">
                         <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                     </div>
-                </div>
-
-                <!-- Liens vers les options du menu utilisateur -->
-                <div class="modal-body">
+                    </div>
+                    <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="#">Mon profile</a>
+                            <a href="./profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -180,7 +219,7 @@
                             <a href="../back/responsable/logout.php">Se déconnecter</a>
                         </li>
                     </ul>
-                </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -201,13 +240,27 @@
                     </div>
                     <ul>
                         <!-- Liens vers les différentes pages liées à la classe -->
-                        <li><a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a></li>
-                        <li><a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a></li>
-                        <li><a href="./absences.html" class="nav-link">Absences</a></li>
-                        <li><a href="./matieres.php?id=<?php echo $id_classe ?>" class="nav-link active">Matières</a></li>
-                        <li><a href="./notes.html" class="nav-link">Notes</a></li>
-                        <li><a href="./renvoyer.html" class="nav-link">Renvoyer</a></li>
-                        <li><a href="index.php" class="nav-link">Bulletins</a></li>
+                        <li>
+                            <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
+                        </li>
+                        <li>
+                            <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
+                        </li>
+                        <li>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
+                        </li>
+                        <li>
+                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link active">Cours</a>
+                        </li>
+                        <li>
+                            <a href="./notes.html" class="nav-link">Notes</a>
+                        </li>
+                        <li>
+                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a>
+                        </li>
+                        <li>
+                            <a href="index.php" class="nav-link">Bulletins</a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -274,10 +327,6 @@
                         <!-- Message si aucun élève -->
                         <h5>Aucun matière trouvé</h5>
                     <?php endif; ?>
-                </div>
-                            <!-- Bouton pour imprimer la liste de la classe -->
-                            <div class="bt">
-                    <a href="./printclasse.php?id=<?php echo $id_classe ?>" class="btn btn-print">Imprimer</a>
                 </div>
             <?php else: ?>
                 <!-- Message si aucune classe trouvée -->

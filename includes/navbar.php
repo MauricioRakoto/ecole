@@ -5,7 +5,7 @@
     </a>
     <div class="menu">
             <?php foreach ( $comptes as $compte ): ?>
-            <button class="btn-menu" id="menu">
+            <button class="icone" id="menu" style="border: 0; background: none; overflow: hidden">
                 <?php if (!empty($compte['image'])): ?>
                     <img src="./assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
                 <?php else: ?>
@@ -21,7 +21,7 @@
                     <div class="tp-image">
                     <?php foreach ( $comptes as $compte ): ?>
                         <?php if (!empty($compte['image'])): ?>
-                            <div class="image">
+                            <div class="photo">
                                 <img src="./assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
                             </div>
                             <?php else: ?>

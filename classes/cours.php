@@ -89,6 +89,22 @@
         a.btn-data:hover {
             background: #009cff;
         }
+
+        button.icone {
+            border: 0;
+         }
+
+        button.icone img {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+        }
+
+        .photo img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%;
+        }
     </style>
 </head>
     <body>
@@ -96,40 +112,39 @@
         <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
             <!-- Logo et nom -->
             <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
-            <h3 style="font-size: 20px">Ecole</h3>
+                <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
+                <h3 style="font-size: 20px">Ecole</h3>
             </a>
 
             <!-- Menu utilisateur -->
             <div class="menu">
                 <?php foreach ( $comptes as $compte ): ?>
-                    <button class="btn-menu" id="menu">
-                        <?php if (!empty($compte['image'])): ?>
-                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                        <?php else: ?>
-                            M
-                        <?php endif; ?>
+                    <button class="icone" id="menu">
+                    <?php if (!empty($compte['image'])): ?>
+                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <?php else: ?>
+                        M
+                    <?php endif; ?>
                     </button>
-
-                <?php endforeach; ?>  
+                <?php endforeach; ?>   
                 <div class="menu-name">
-                <h4><?= $_SESSION['username'] ?></h4>
+                    <h4><?= $_SESSION['username'] ?></h4>
                 </div>
                 <div class="menu-modal">
-                <div class="modal-top">
+                    <div class="modal-top">
                     <div class="tp-image">
-                        <?php foreach ( $comptes as $compte ): ?>
-                            <?php if (!empty($compte['image'])): ?>
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <div class="photo">
+                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                            </div>
+                            <?php else: ?>
                                 <div class="image">
-                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                    M
                                 </div>
-                                <?php else: ?>
-                                    <div class="image">
-                                        Image
-                                    </div>
                             <?php endif; ?>
                        
-                            <?php endforeach; ?>
+                        <?php endforeach; ?>   
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -137,13 +152,11 @@
                     <div class="tp-compte">
                         <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                     </div>
-                </div>
-
-                <!-- Liens vers les options du menu utilisateur -->
-                <div class="modal-body">
+                    </div>
+                    <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="../profile.php">Mon profile</a>
+                            <a href="./profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -152,7 +165,7 @@
                             <a href="../back/responsable/logout.php">Se déconnecter</a>
                         </li>
                     </ul>
-                </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -263,7 +276,7 @@
                                             <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
                                                 <div class="links">
                                                     <a href="./editcours.php?id=<?= $id_classe ?>&&idc=<?= $cour['cours_id'] ?>" class="btn btn-data">Modifier</a>
-                                                    <a href="../back/cours/deleteCours.php?id=<?= $cour['cours_id'] ?>&&idc=<?= $id_classe ?>" class="btn btn-data">Supprimer</a>
+                                                    <a href="../back/cours/deleteCours.php?id=<?= $cour['cours_id'] ?>&idc=<?= $id_classe ?>" class="btn btn-data">Supprimer</a>
                                                 </div>
                                             <?php endif; ?>
                                         </td>
@@ -277,10 +290,7 @@
                         <h5>Aucun matière trouvé</h5>
                     <?php endif; ?>
                 </div>
-                            <!-- Bouton pour imprimer la liste de la classe -->
-                            <div class="bt">
-                    <a href="./printclasse.php?id=<?php echo $id_classe ?>" class="btn btn-print">Imprimer</a>
-                </div>
+                           
             <?php else: ?>
                 <!-- Message si aucune classe trouvée -->
                 <h5>Aucun classe trouvé</h5>

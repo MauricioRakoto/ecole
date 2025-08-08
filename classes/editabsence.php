@@ -54,6 +54,17 @@
      $stmt_compte = $pdo->prepare($sql_compte);
      $stmt_compte->execute([$_SESSION['responsable_id']]);
      $comptes = $stmt_compte->fetchAll();
+
+
+     // Récupérer un absence
+     $sql_absence = "SELECT * FROM absences WHERE absences_id = ?";
+     $stmt_absence = $pdo->prepare($sql_absence);
+     $stmt_absence->execute([
+         $_GET['idc']
+     ]);
+
+     $absences = $stmt_absence->fetchAll();
+
 ?>
 
 
@@ -79,22 +90,6 @@
         table td:nth-child(2) {
             width: 1%;
         }
-
-        button.icone {
-            border: 0;
-         }
-
-        button.icone img {
-            width: 30px; 
-            height: 30px; 
-            border-radius: 50%;
-        }
-
-        .photo img {
-            width: 60px; 
-            height: 60px; 
-            border-radius: 50%;
-        }
     </style>
 </head>
     <body>
@@ -109,32 +104,33 @@
             <!-- Menu utilisateur -->
             <div class="menu">
                 <?php foreach ( $comptes as $compte ): ?>
-                <button class="icone" id="menu">
-                <?php if (!empty($compte['image'])): ?>
-                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                <?php else: ?>
-                    M
-                <?php endif; ?>
-                </button>
-                <?php endforeach; ?>   
+                    <button class="btn-menu" id="menu">
+                        <?php if (!empty($compte['image'])): ?>
+                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                        <?php else: ?>
+                            M
+                        <?php endif; ?>
+                    </button>
+
+                <?php endforeach; ?> 
                 <div class="menu-name">
-                    <h4><?= $_SESSION['username'] ?></h4>
+                <h4><?= $_SESSION['username'] ?></h4>
                 </div>
                 <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                    <?php foreach ( $comptes as $compte ): ?>
-                        <?php if (!empty($compte['image'])): ?>
-                            <div class="photo">
-                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
-                            </div>
-                            <?php else: ?>
+                        <?php foreach ( $comptes as $compte ): ?>
+                            <?php if (!empty($compte['image'])): ?>
                                 <div class="image">
-                                    M
+                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
                                 </div>
+                                <?php else: ?>
+                                    <div class="image">
+                                        Image
+                                    </div>
                             <?php endif; ?>
                        
-                        <?php endforeach; ?>   
+                        <?php endforeach; ?>
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -143,10 +139,12 @@
                         <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                     </div>
                 </div>
+
+                <!-- Liens vers les options du menu utilisateur -->
                 <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="./profile.php">Mon profile</a>
+                            <a href="../profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -203,7 +201,7 @@
                 <div class="tp">
                     <div class="add notes">
                         <a href="./absences.php?id=<?php echo $id_classe ?>" class="btn-add">Listes</a>
-                        <a href="./addabsences.php?id=<?php echo $id_classe ?>" class="btn-add active">Nouveaux</a>
+                        <a href="./addabsences.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
                     </div>
 
                     <div class="search">
@@ -227,98 +225,54 @@
                 </div>
 
                 <div id="carouselExampleIndicators" class="carousel" >
-                    <h3 style="font-size: 16px; font-weight: 500">Mode de saisir</h3>
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1">Automatique</button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" class="" aria-label="Slide 2">Manuel</button>
-                    </div>
 
                     <div class="bd">
                     
                         <div class="carousel-inner">
+                            
                             <div class="carousel-item active">
-                            <form action="../back/absences/addAbsences.php" method="POST" class="d-block w-100 auto">
-                                <div class="tp-form" style="margin-top: 20px;">
-
-                                    <!-- Sélection matière -->
-                                    <div class="form-group">
-                                        <div class="label">
-                                            <h3>Matière</h3>
-                                        </div>
-                                        <div class="select">  
-                                            <?php if (count($cours) > 0): ?>
-                                                <select name="matiere_id" required>
-                                                    <?php foreach ($cours as $cour): ?>
-                                                        <option value="<?= $cour['matiere_id'] ?>"><?= $cour['nom_matiere'] ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            <?php else: ?>
-                                                <h5>Aucune matière trouvée</h5>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-
-                                    <!-- Get Id matière -->
-                                    <input type="hidden" name="classe_id" value="<?= $id_classe ?>">
+                                <form action="../back/absences/updateAbsence.php?id=<?= $id_classe ?>&idc=<?= $_GET['idc'] ?>" method="POST" class="d-block w-100 manuel">
                                     
+                                    <?php foreach ( $absences as $absence ): 
 
-                                    <!-- Date d'absence global -->
-                                    <!-- <div class="form-group">
-                                        <div class="label">
-                                            <h4>Date d'absence</h4>
-                                        </div>
-                                        <div class="input">
-                                            <input type="date" name="date" required>
-                                        </div>
-                                    </div> -->
+                                        $sql_matiere = "SELECT matiere_id, nom_matiere FROM matieres WHERE matiere_id = ?";
+                                        $stmt_matiere = $pdo->prepare($sql_matiere);
+                                        $stmt_matiere->execute(
+                                            [
+                                                $absence['matiere_id']
+                                            ]
+                                        );
 
-                                    <!-- Tableau des élèves -->
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Matricule</th>
-                                                <th>Nom & Prénom</th>
-                                                <th>Sexe</th>
-                                                <th>Minutes d'absence</th>
-                                            </tr>
-                                    </thead>
+                                        $matieres = $stmt_matiere->fetchAll();
 
-                                    <tbody>
-                                        <?php foreach ($eleves as $eleve): ?> 
-                                            <tr>
-                                                <td><?= $eleve['numero'] ?></td>
-                                                <td><?= $eleve['eleve_id'] ?></td>
-                                                <td><?= $eleve['nom_eleve'] ?> <?= $eleve['prenom_eleve'] ?></td>
-                                                <td><?= $eleve['sexe_eleve'] ?></td>
-                                                <td>
-                                                    <input type="hidden" name="eleve_id[]" value="<?= $eleve['eleve_id'] ?>">
-                                                    <input type="number" name="minutes[]" class="form-control" min="0" placeholder="minutes">
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
+                                        $sql_absence_eleve = "SELECT eleve_id, numero, nom_eleve, prenom_eleve FROM eleves WHERE eleve_id = ?";
+                                        $stmt_absence_eleve = $pdo->prepare($sql_absence_eleve);
+                                        $stmt_absence_eleve->execute(
+                                            [
+                                                $absence['eleve_id']
+                                            ]
+                                        );
 
-                                    <!-- Bouton -->
-                                    <div class="submit">
-                                        <button type="submit" class="btn btn-primary">Terminer</button>
-                                    </div>
-                                </div>
-                            </form>
+                                        $absences_eleves = $stmt_absence_eleve->fetchAll();
 
-                            </div>
-                            <div class="carousel-item">
-                                <form action="../back/absences/addAbsence.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 manuel">
-                                    <div class="form-group">
-                                        <div class="label">
+                                        ?>
+                                        <div class="form-group">
+                                            <div class="label">
                                             <h4>Matière</h4>
-                                        </div>
-                                        <div class="select">
+                                            </div>
+                                            <div class="select">
                                             
                                             <?php if (count($cours) > 0): ?>
+
                                                 <select name="matiere_id" required>
+                                                    <?php foreach ($matieres as $matiere): ?>
+                                                        <option value="<?= $matiere['matiere_id'] ?>">
+                                                        <?= $matiere['nom_matiere'] ?>
+                                                    </option>
+                                                    <?php endforeach; ?>
+
                                                     <?php foreach ($cours as $cour): ?>
+                                                        
                                                         <option value="<?= $cour['matiere_id'] ?>"><?= $cour['nom_matiere'] ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
@@ -326,14 +280,23 @@
                                                 <h5>Aucune matière trouvée</h5>
                                             <?php endif; ?>
                                               
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="label">
-                                            <h4>Eleve</h4>
-                                        </div>
-                                        <div class="select">
+                                        <div class="form-group">
+                                            <div class="label">
+                                                <h4>Eleve</h4>
+                                            </div>
+                                            <div class="select">
                                             <select name="eleve_id" id="">
+                                                <?php foreach ($absences_eleves as $absence_eleve): ?>
+                                                    <option value="<?= $absence_eleve['eleve_id'] ?>">
+                                                        N° 
+                                                        <?= $absence_eleve['numero'] ?>
+                                                        <?= $absence_eleve['nom_eleve'] ?>
+                                                        <?= $absence_eleve['prenom_eleve'] ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+
                                                 <?php foreach ($eleves as $eleve): ?>
                                                     <option value="<?= $eleve['eleve_id'] ?>">
                                                         N° 
@@ -344,24 +307,26 @@
                                                 <?php endforeach; ?>
                                             </select>
                                             
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="label">
-                                            <h4>Minutes</h4>
+                                        <div class="form-group">
+                                            <div class="label">
+                                                <h4>Minutes</h4>
+                                            </div>
+                                            <div class="input">
+                                                <input type="text" name="minutes" value="<?= $absence['minutes'] ?>" required>
+                                            </div>
                                         </div>
-                                        <div class="input">
-                                            <input type="text" name="minutes" required>
+                                        <div class="form-group">
+                                            <div class="label">
+                                                <h4>Date d'absence</h4>
+                                            </div>
+                                            <div class="input">
+                                                <input type="date" name="date"  value="<?= $absence['date_absence'] ?>" required>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="label">
-                                            <h4>Date d'absence</h4>
-                                        </div>
-                                        <div class="input">
-                                            <input type="date" name="date" required>
-                                        </div>
-                                    </div>
+                                        
+                                    <?php endforeach; ?>
                                     <div class="submit">
                                         <button type="submit" href="./print-classe.html" class="btn btn-primary" >Terminer</button>
                                     </div>

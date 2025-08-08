@@ -39,6 +39,23 @@
     <!-- Inclusion des fichiers CSS nécessaires -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
+    <style>
+        button.icone {
+            border: 0;
+         }
+
+        button.icone img {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+        }
+
+        .photo img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
 
@@ -53,35 +70,32 @@
         <!-- Menu utilisateur avec nom et options -->
         <div class="menu">
             <?php foreach ( $comptes as $compte ): ?>
-                <button class="btn-menu" id="menu">
-                    <?php if (!empty($compte['image'])): ?>
-                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                    <?php else: ?>
-                        M
-                    <?php endif; ?>
-                </button>
-
+            <button class="icone" id="menu">
+                <?php if (!empty($compte['image'])): ?>
+                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                <?php else: ?>
+                    M
+                <?php endif; ?>
+            </button>
             <?php endforeach; ?>   
             <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
             </div>
-
-            <!-- Fenêtre modale du menu utilisateur -->
             <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                        <?php foreach ( $comptes as $compte ): ?>
-                            <?php if (!empty($compte['image'])): ?>
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <div class="photo">
+                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                            </div>
+                            <?php else: ?>
                                 <div class="image">
-                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                    M
                                 </div>
-                                <?php else: ?>
-                                    <div class="image">
-                                        Image
-                                    </div>
                             <?php endif; ?>
                        
-                        <?php endforeach; ?>
+                        <?php endforeach; ?>   
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -90,11 +104,10 @@
                         <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                     </div>
                 </div>
-
                 <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="../profile.php">Mon profile</a>
+                            <a href="./profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -164,7 +177,7 @@
                             <?php if (count($classes) > 0):  ?>
                                 <!-- Boucle sur les classes et les affiche sous forme de cartes -->
                                 <?php  foreach ( $classes as $classe ): 
-                                    $sql_eleves = "SELECT COUNT(eleve_id), eleve_id AS nombre_eleves FROM eleves WHERE classe_id = ?";
+                                    $sql_eleves = "SELECT COUNT(eleve_id) AS eleve_id FROM eleves WHERE classe_id = ?";
 
                                     $stmt_eleves = $pdo->prepare($sql_eleves);
                                     $stmt_eleves->execute([$classe['classe_id']]);
@@ -180,8 +193,8 @@
 
                                                     
                                                     <?php  foreach ( $eleves as $eleve ): ?>
-                                                        <?php if ( $eleve['nombre_eleves'] > 0):  ?>
-                                                            <h4>Effectifs: <?= $eleve['nombre_eleves'] ?></h4> <!-- Valeur statique ici, à adapter dynamiquement si nécessaire -->
+                                                        <?php if ( $eleve['eleve_id'] > 0):  ?>
+                                                            <h4>Effectifs: <?= $eleve['eleve_id'] ?></h4> <!-- Valeur statique ici, à adapter dynamiquement si nécessaire -->
                                                             <?php else: ?>
                                                         <!-- Message si aucune classe trouvée -->
                                                             <h4>Effectifs: 0</h4>

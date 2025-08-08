@@ -41,6 +41,23 @@
     <!-- Inclusion des fichiers CSS nécessaires -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
+    <style>
+        button.icone {
+            border: 0;
+         }
+
+        button.icone img {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+        }
+
+        .photo img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
 
@@ -55,35 +72,32 @@
         <!-- Menu utilisateur avec nom et options -->
         <div class="menu">
             <?php foreach ( $comptes as $compte ): ?>
-                <button class="btn-menu" id="menu">
-                    <?php if (!empty($compte['image'])): ?>
-                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                    <?php else: ?>
-                        M
-                    <?php endif; ?>
-                </button>
-
-            <?php endforeach; ?> 
+            <button class="icone" id="menu">
+                <?php if (!empty($compte['image'])): ?>
+                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                <?php else: ?>
+                    M
+                <?php endif; ?>
+            </button>
+            <?php endforeach; ?>   
             <div class="menu-name">
                 <h4><?= $_SESSION['username'] ?></h4>
             </div>
-
-            <!-- Fenêtre modale du menu utilisateur -->
             <div class="menu-modal">
                 <div class="modal-top">
                     <div class="tp-image">
-                        <?php foreach ( $comptes as $compte ): ?>
-                            <?php if (!empty($compte['image'])): ?>
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <div class="photo">
+                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                            </div>
+                            <?php else: ?>
                                 <div class="image">
-                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                    M
                                 </div>
-                                <?php else: ?>
-                                    <div class="image">
-                                        Image
-                                    </div>
                             <?php endif; ?>
                        
-                        <?php endforeach; ?>
+                        <?php endforeach; ?>   
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -92,12 +106,17 @@
                         <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                     </div>
                 </div>
-
                 <div class="modal-body">
                     <ul class="modal-links">
-                        <li><a href="../profile.php">Mon profile</a></li>
-                        <li><a href="#">Paramètre</a></li>
-                        <li><a href="../back/responsable/logout.php">Se déconnecter</a></li>
+                        <li>
+                            <a href="./profile.php">Mon profile</a>
+                        </li>
+                        <li>
+                            <a href="#">Paramètre</a>
+                        </li>
+                        <li>
+                            <a href="../back/responsable/logout.php">Se déconnecter</a>
+                        </li>
                     </ul>
                 </div>
             </div>

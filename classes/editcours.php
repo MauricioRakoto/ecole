@@ -43,6 +43,21 @@
     $stmt_compte = $pdo->prepare($sql_compte);
     $stmt_compte->execute([$_SESSION['responsable_id']]);
     $comptes = $stmt_compte->fetchAll();
+
+    $sql_cour = "SELECT a.*, b.* 
+                    FROM cours a
+                    LEFT JOIN matieres b
+                    ON a.matiere_id = b.matiere_id  
+                    WHERE a.cours_id = ?";
+    $stmt_cour = $pdo->prepare($sql_cour);
+    $stmt_cour->execute([$_GET['idc']]);
+    $cours_edits = $stmt_cour->fetchAll();
+
+    $sql_cour_matiere = "SELECT matiere_id, nom_matiere FROM matieres WHERE matiere_id = ?";
+    $stmt_cour_matiere = $pdo->prepare($sql_cour_matiere);
+    $stmt_cour_matiere->execute([$_GET['idc']]);
+    $cour_matieres = $stmt_cour_matiere->fetchAll();
+
 ?>
 
 
@@ -68,6 +83,48 @@
         table td:nth-child(2) {
             width: 1%;
         }
+
+        table th:nth-child(3),
+        table td:nth-child(3) {
+            width: 5%;
+        }
+
+        .links {
+            display: flex;
+            gap: 10px;
+        }
+
+        a.btn-data {
+            width: 90px;
+            height: 30px;
+            background: #d3cad9;
+            transition: 1s ease-in-out;
+            color: black;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a.btn-data:hover {
+            background: #009cff;
+        }
+
+        button.icone {
+            border: 0;
+         }
+
+        button.icone img {
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%;
+        }
+
+        .photo img {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%;
+        }
     </style>
 </head>
     <body>
@@ -84,8 +141,11 @@
                 </div>
             </div>
             <div class="bd-add">
-                <!-- Champ: nom du matiere -->
-                <div class="form-group">
+                <?php if (count($cours_edits) > 0):  ?>
+
+                <?php foreach ( $cours_edits as $cours_edit ): ?>
+                    <!-- Champ: nom du matiere -->
+                    <div class="form-group">
                     <div class="label">
                         <h4>Classe</h4>
                     </div>
@@ -97,21 +157,38 @@
                         </select>
                         
                     </div>
-                </div>
+                    </div>
 
-                <div class="form-group">
+                    <div class="form-group">
                     <div class="label">
                         <h4>Matière</h4>
                     </div>
                     <div class="select">
                         <select name="matiere_id">
-                            <?php foreach ( $matieres as $matiere ): ?>
-                                <option value="<?= $matiere['matiere_id'] ?>"><?= $matiere['nom_matiere'] ?></option>
+                            
+                            <option value="<?= $cours_edit['matiere_id'] ?>">
+                                <?= $cours_edit['nom_matiere'] ?>
+                            </option>
+                            <?php foreach ( $cour_matieres as $cour_matiere ): ?>
+                                <option value="<?= $cour_matiere['matiere_id'] ?>">
+                                    <?= $cour_matiere['nom_matiere'] ?>
+                                </option>
+                                <?php endforeach; ?>
+                                <?php foreach ( $matieres as $matiere ): ?>
+                                    <option value="<?= $matiere['matiere_id'] ?>">
+                                    <?= $matiere['nom_matiere'] ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                         
                     </div>
-                </div>
+                    </div>
+                <?php endforeach; ?>
+
+                <?php else: ?>
+                        <!-- Message si aucun élève -->
+                        <h5>Aucun cour trouvé</h5>
+                <?php endif; ?>
                 
                 <!-- Bouton de soumission du formulaire -->
                 <div class="form-submit">
@@ -131,33 +208,32 @@
             <!-- Menu utilisateur -->
             <div class="menu">
                 <?php foreach ( $comptes as $compte ): ?>
-                    <button class="btn-menu" id="menu">
-                        <?php if (!empty($compte['image'])): ?>
-                            <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                        <?php else: ?>
-                            M
-                        <?php endif; ?>
+                    <button class="icone" id="menu">
+                    <?php if (!empty($compte['image'])): ?>
+                        <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <?php else: ?>
+                        M
+                    <?php endif; ?>
                     </button>
-
-                <?php endforeach; ?>  
+                <?php endforeach; ?>   
                 <div class="menu-name">
                     <h4><?= $_SESSION['username'] ?></h4>
                 </div>
                 <div class="menu-modal">
-                <div class="modal-top">
+                    <div class="modal-top">
                     <div class="tp-image">
-                        <?php foreach ( $comptes as $compte ): ?>
-                            <?php if (!empty($compte['image'])): ?>
+                    <?php foreach ( $comptes as $compte ): ?>
+                        <?php if (!empty($compte['image'])): ?>
+                            <div class="photo">
+                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                            </div>
+                            <?php else: ?>
                                 <div class="image">
-                                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                    M
                                 </div>
-                                <?php else: ?>
-                                    <div class="image">
-                                        Image
-                                    </div>
                             <?php endif; ?>
                        
-                            <?php endforeach; ?>
+                        <?php endforeach; ?>   
                     </div>
                     <div class="tp-name">
                         <h4><?= $_SESSION['username'] ?></h4>
@@ -165,13 +241,11 @@
                     <div class="tp-compte">
                         <h4>Compte: <?= $_SESSION['compte'] ?></h4>
                     </div>
-                </div>
-
-                <!-- Liens vers les options du menu utilisateur -->
-                <div class="modal-body">
+                    </div>
+                    <div class="modal-body">
                     <ul class="modal-links">
                         <li>
-                            <a href="#">Mon profile</a>
+                            <a href="./profile.php">Mon profile</a>
                         </li>
                         <li>
                             <a href="#">Paramètre</a>
@@ -180,7 +254,7 @@
                             <a href="../back/responsable/logout.php">Se déconnecter</a>
                         </li>
                     </ul>
-                </div>
+                    </div>
                 </div>
             </div>
         </nav>

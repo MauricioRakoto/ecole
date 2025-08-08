@@ -1,3 +1,13 @@
+<?php 
+
+    session_start();
+
+    if (isset($_SESSION['responsable_id'])) {
+        header("Location: home.php");
+        exit();
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
