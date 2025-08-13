@@ -122,7 +122,7 @@
     </nav>
 
     <!-- Conteneur principal avec barre latérale et contenu principal -->
-    <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
+    <div id="mainContent" class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
         
         <!-- Barre latérale de navigation -->
         <div class="sidebar" style="width: 200px; padding: 0 20px; ">
@@ -218,6 +218,36 @@
 
     <!-- Inclusion du fichier JavaScript principal -->
     <script src="../assets/js/main.js"></script>
+
+    <script>
+    const menuBtn = document.getElementById("menu");
+    const menuModal = document.querySelector(".menu-modal");
+    const mainContent = document.getElementById("mainContent");
+
+    let isMenuOpen = false;
+
+    menuBtn.addEventListener("click", () => {
+        isMenuOpen = !isMenuOpen;
+        
+        if (isMenuOpen) {
+            menuModal.style.display = "block";
+            mainContent.style.display = "none"; // Masque le contenu principal
+        } else {
+            menuModal.style.display = "none";
+            mainContent.style.display = "flex"; // Réaffiche le contenu principal
+        }
+    });
+
+    // Clique extérieur pour fermer le menu
+    document.addEventListener("click", (e) => {
+        if (!menuModal.contains(e.target) && !menuBtn.contains(e.target)) {
+            menuModal.style.display = "none";
+            mainContent.style.display = "flex";
+            isMenuOpen = false;
+        }
+    });
+</script>
+
     
 </body>
 </html>

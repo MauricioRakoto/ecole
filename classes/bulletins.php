@@ -106,6 +106,7 @@
 
    
     
+
 ?>
 
 
@@ -281,7 +282,7 @@
                             </li>
                         <?php endif; ?>
                         <li>
-                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link active">Absences</a>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link ">Absences</a>
                         </li>
                         <li>
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
@@ -290,7 +291,9 @@
                             <a href="./notes.html" class="nav-link">Notes</a>
                         </li>
                         <li><a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a></li>
-                        <li><a href="index.php" class="nav-link">Bulletins</a></li>
+                        <li>
+                            <a href="./bulletins.php?id=<?php echo $id_classe ?>" class="nav-link active">Bulletins</a>
+                        </li>
                     </ul>
                 </div>
                 </nav>
@@ -300,22 +303,20 @@
                 <?php if (count($classes) > 0):  
                     $date_today = date("Y-m-d");
                     ?>
-                    <div class="tp" style="justify-content: normal; gap: 100px">
-                    <div class="add notes">
-                        <a href="./absences.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
-                        <a href="./addabsences.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
-                    </div>
-                
-                    <div class="search">
-                        <form action="" method="GET">
-                            <input type="hidden" name="id" value="<?php echo $id_classe ?>">
-                            <input type="date" name="date" value="<?php echo isset($_GET['date']) ? htmlspecialchars($_GET['date']) : ''; ?>">
 
-                            <button type="submit">Rechercher</button>
-                        </form>
-
+                    <div class="tp">
+                        <div class="periodes" style="margin-top: 0">
+                            <div class="periode-name">
+                                <h3>Session d'examen</h3>
+                            </div>
+                            <div class="periodes-links">
+                                <a class="active" href="./bulletins.php?id=<?php echo $id_classe ?>&s=1">1 Trimèstre</a>
+                                <a href="./bulletins.php?id=<?php echo $id_classe ?>&s=2">2 Trimèstre</a>
+                                <a href="./bulletins.php?id=<?php echo $id_classe ?>&s=3">3 Trimèstre</a>
+                            </div>
+                        </div>
                     </div>
-                    </div>
+                   
 
                     <?php if ($search): ?>
                         <div class="bd">
@@ -350,41 +351,99 @@
                         </div>
 
                         <?php else: ?>
-                            <div class="tp-form" style="margin-top: 20px;">
-
-                                <form action="" class="form-group" id="classForm" method="POST">
-                                    <div class="label">
-                                        <h4>Matière</h4>
-                                    </div>
-                                    <div class="select" >
-                                        <select name="matiere_id" id="Classe" onchange="submitForm()">
-                                            <?php foreach ($cours as $cour): ?>
-                                                <option value="<?= $cour['matiere_id'] ?>"
-                                                    <?= $selectedMatiereId == $cour['matiere_id'] ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($cour['nom_matiere']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
+                          
 
                             <div class="col-classe-l" style="margin-top: 20px;">
                                 <?php foreach ( $classes as $classe ): ?>
                                     <!-- Informations générales de la classe -->
-                                    <h1>Absences dans la Classe <?php echo $classe['nom_classe'] ?></h1>
+                                    <h1>Bulletins dans la Classe <?php echo $classe['nom_classe'] ?></h1>
                                     <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                                    <h3>
-                                        Matiere: 
-                                        <?php foreach ($matieres as $matiere): ?>
-                                            <?= htmlspecialchars($matiere['nom_matiere']) ?>
-                                        <?php endforeach; ?>
-                                    </h3>
                                     <h3>Salle: <?php echo $classe['salle'] ?></h3>
                                 <?php endforeach; ?>
                             </div>
 
                             <div class="bd">
+                            <div id="notesContainer"></div>
+
+                    <script>
+                        // Fonction pour récupérer un paramètre dans l'URL
+                        function getParameterByName(name) {
+                          const url = window.location.href;
+                          name = name.replace(/[\[\]]/g, '\\$&'); // échappe les crochets
+                          const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+                          const results = regex.exec(url);
+                          if (!results) return null;
+                          if (!results[2]) return '';
+                          return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                        }
+                    
+                        // Récupérer id et s dans l'URL
+                        const id = getParameterByName('id');
+                        const s = getParameterByName('s');
+                    
+                        if (id && s) {
+                          fetch(`get_notes.php?id=${id}&s=${s}`)
+                            .then(response => response.json())
+                            .then(data => {
+                              if (data.error) {
+                                document.getElementById('notesContainer').innerHTML = `<p>Erreur: ${data.error}</p>`;
+                                return;
+                              }
+                              afficherNotes(data);
+                            })
+                            .catch(error => {
+                              document.getElementById('notesContainer').innerHTML = `<p>Erreur réseau: ${error}</p>`;
+                            });
+                        } else {
+                          document.getElementById('notesContainer').innerHTML = `<p>Paramètres URL manquants.</p>`;
+                        }
+                    
+                        // Fonction pour afficher les notes
+                        function afficherNotes(data) {
+                        const container = document.getElementById('notesContainer');
+                        let html = `
+                          <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Matricule</th>
+                                <th>Nom et Prénom</th>
+                                <th>Sexe</th>
+                                <th>Note</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                        `;
+
+                        data.forEach(eleve => {
+                          // Pour afficher les notes, on va concaténer toutes les notes dans une cellule
+                          let notesHTML = eleve.notes.map(note => `${note.note}`).join('<br>');
+                        
+                          html += `
+                            <tr>
+                              <td>${eleve.numero}</td>
+                              <td>${eleve.eleve_id}</td>
+                              <td>${eleve.nom_eleve} ${eleve.prenom_eleve}</td>
+                              <td>${eleve.sexe_eleve}</td>
+                              <td>${notesHTML}</td>
+                              <td>
+                                <a class='btn btn-primary' href='./bulletin.php?id=${id}&ide=${eleve.eleve_id}&s=${s}'>Voir</a>
+                              </td>
+                            </tr>
+                          `;
+                        });
+                    
+                        html += `
+                            </tbody>
+                          </table>
+                        `;
+                    
+                        container.innerHTML = html;
+                        }
+
+                    </script>
+
                             <?php if (count($absences) > 0):  ?>
                                 <!-- Affichage de la liste des élèves -->
                                 <table class="table table-hover">
@@ -460,13 +519,10 @@
                                 </table>
                             <?php else: ?>
                             <!-- Message si aucun élève -->
-                            <h5>Aucun matière trouvé</h5>
+                            <h5>Aucun élèves trouvé</h5>
                                 <?php endif; ?>
                             </div>
                             <!-- Bouton pour imprimer la liste de la classe -->
-                            <div class="bt">
-                                <a href="./printclasse.php?id=<?php echo $id_classe ?>" class="btn btn-print">Imprimer</a>
-                            </div>
                         <?php endif; ?>
                     
                     <?php else: ?>
@@ -479,6 +535,70 @@
 
         <!-- Inclusion du JavaScript principal -->
         <script src="../assets/js/main.js"></script>
+
+        <!-- <script>
+            // Fonction pour récupérer la valeur d'un paramètre GET dans l'URL
+            function getParameterByName(name) {
+              const url = window.location.href;
+              name = name.replace(/[\[\]]/g, '\\$&'); // échappe les crochets
+              const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+              const results = regex.exec(url);
+              if (!results) return null;
+              if (!results[2]) return '';
+              return decodeURIComponent(results[2].replace(/\+/g, ' '));
+            }
+        
+            // Récupérer la valeur du paramètre "s"
+            const s = getParameterByName('s');
+        
+            // Si 's' est défini, gérer la classe active
+            if (s) {
+              // Sélectionner tous les liens de session d'examen
+              const links = document.querySelectorAll('.periodes-links a');
+            
+              links.forEach(link => {
+                // Extraire la valeur du paramètre s dans le href du lien
+                const urlParams = new URLSearchParams(link.search);
+                const sValue = urlParams.get('s');
+
+                // Ajouter ou retirer la classe "active"
+                if (sValue === s) {
+                  link.classList.add('active');
+                } else {
+                  link.classList.remove('active');
+                }
+              });
+            }
+        </script> -->
+
+    
+
+    
+
+    <script>
+        document.querySelectorAll('.periodes-links a').forEach(link => {
+            
+        link.addEventListener('click', e => {
+            e.preventDefault();
+
+            // Retirer la classe active de tous les liens et la remettre sur celui cliqué
+            document.querySelectorAll('.periodes-links a').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+
+            // Extraire la session du href
+            const urlParams = new URLSearchParams(link.search);
+            const sValue = urlParams.get('s') || 1;
+
+            // Charger les notes pour la session choisie
+            loadNotes(idClasse, sValue);
+
+            // Optionnel : modifier l'URL sans recharger (history API)
+            history.replaceState(null, '', `?id=${idClasse}&s=${sValue}`);
+        });
+    });
+
+    </script>
+
     </body>
 </html>
 

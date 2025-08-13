@@ -209,7 +209,7 @@
                                             <?php foreach ( $eleves as $eleve ): ?>
                                                 <tr>
                                                     <th scope="row">
-                                                        <?= $eleve['numero'] ?>
+                                                        <?php echo !empty($eleve['numero']) ? $eleve['numero'] : 0; ?>
                                                     </th>
                                                     <td>
                                                         <?php echo $eleve['eleve_id'] ?>
@@ -254,5 +254,27 @@
 
     <script src="../assets/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/main.js"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const numeroInputs = document.querySelectorAll('input[name^="numbers["]');
+        let count = 1;
+
+        // Trier les inputs selon leur position dans le tableau
+        const inputsArray = Array.from(numeroInputs);
+        inputsArray.sort((a, b) => {
+            // Trier selon l'ID de l'élève (dans name="numbers[ID]")
+            const idA = parseInt(a.name.match(/\d+/)[0]);
+            const idB = parseInt(b.name.match(/\d+/)[0]);
+            return idA - idB;
+        });
+
+        // Assigner les valeurs par ordre croissant
+        inputsArray.forEach(input => {
+            input.value = count++;
+        });
+    });
+</script>
+
 </body>
 </html>

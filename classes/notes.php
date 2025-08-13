@@ -104,7 +104,50 @@
         $search_absences = $stmt_search->fetchAll();
     }
 
-   
+    $sql = "SELECT n.note_id,
+                n.session,
+                n.type,
+                n.note,
+                e.eleve_id,
+                e.numero,
+                e.nom_eleve,
+                e.prenom_eleve,
+                e.sexe_eleve,
+                c.nom_classe,
+                m.nom_matiere
+            FROM notes n
+            JOIN eleves e ON n.eleve_id = e.eleve_id
+            JOIN classes c ON n.classe_id = c.classe_id
+            JOIN matieres m ON n.matiere_id = m.matiere_id
+            WHERE 1 = 1
+    ";
+
+    // Ajouter les filtres dynamiquement
+    $params = [];
+
+    if (!empty($_GET['classe_id'])) {
+        $sql .= " AND n.classe_id = :classe_id";
+        $params[':classe_id'] = $_GET['classe_id'];
+    }
+
+    if (!empty($_GET['session'])) {
+        $sql .= " AND n.session = :session";
+        $params[':session'] = $_GET['s'];
+    }
+
+    if (!empty($_GET['matiere_id'])) {
+        $sql .= " AND n.matiere_id = :matiere_id";
+        $params[':matiere_id'] = $_GET['m'];
+    }
+
+    $sql .= " ORDER BY n.session DESC, n.type, c.nom_classe, m.nom_matiere, e.nom_eleve";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $notes = $stmt->fetchAll();
+
+
+    
     
 ?>
 
@@ -281,13 +324,13 @@
                             </li>
                         <?php endif; ?>
                         <li>
-                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link active">Absences</a>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
                         </li>
                         <li>
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
                         </li>
                         <li>
-                            <a href="./notes.html" class="nav-link">Notes</a>
+                            <a href="./notes.php?id=<?php echo $id_classe ?>" class="nav-link active">Notes</a>
                         </li>
                         <li><a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a></li>
                         <li><a href="index.php" class="nav-link">Bulletins</a></li>
@@ -301,20 +344,20 @@
                     $date_today = date("Y-m-d");
                     ?>
                     <div class="tp" style="justify-content: normal; gap: 100px">
-                    <div class="add notes">
-                        <a href="./absences.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
-                        <a href="./addabsences.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
-                    </div>
+                        <div class="add notes">
+                            <a href="./notes.php?id=<?php echo $id_classe ?>" class="btn-add active">Listes</a>
+                            <a href="./addnotes.php?id=<?php echo $id_classe ?>" class="btn-add">Nouveaux</a>
+                        </div>
                 
-                    <div class="search">
-                        <form action="" method="GET">
-                            <input type="hidden" name="id" value="<?php echo $id_classe ?>">
-                            <input type="date" name="date" value="<?php echo isset($_GET['date']) ? htmlspecialchars($_GET['date']) : ''; ?>">
+                        <div class="search">
+                            <form action="" method="GET">
+                                <input type="hidden" name="id" value="<?php echo $id_classe ?>">
+                                <input type="search" name="date" value="<?php echo isset($_GET['date']) ? htmlspecialchars($_GET['date']) : ''; ?>">
 
-                            <button type="submit">Rechercher</button>
-                        </form>
+                                <button type="submit">Rechercher</button>
+                            </form>
 
-                    </div>
+                        </div>
                     </div>
 
                     <?php if ($search): ?>
@@ -352,112 +395,107 @@
                         <?php else: ?>
                             <div class="tp-form" style="margin-top: 20px;">
 
-                                <form action="" class="form-group" id="classForm" method="POST">
+                                <form action="../back/notes/addNotes.php" class="form-group" id="classForm" method="POST">
                                     <div class="label">
                                         <h4>Matière</h4>
                                     </div>
                                     <div class="select" >
-                                        <select name="matiere_id" id="Classe" onchange="submitForm()">
+                                        <select name="matiere_id" id="matiereSelect" onchange="fetchNotesByMatiere()">
+                                            <option value="">-- Sélectionnez une matière --</option>
                                             <?php foreach ($cours as $cour): ?>
-                                                <option value="<?= $cour['matiere_id'] ?>"
-                                                    <?= $selectedMatiereId == $cour['matiere_id'] ? 'selected' : '' ?>>
+                                                <option value="<?= $cour['matiere_id'] ?>">
                                                     <?= htmlspecialchars($cour['nom_matiere']) ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
+
+                                    <!-- Zone où les notes vont s'afficher -->
+                                    
                                 </form>
                             </div>
 
                             <div class="col-classe-l" style="margin-top: 20px;">
                                 <?php foreach ( $classes as $classe ): ?>
                                     <!-- Informations générales de la classe -->
-                                    <h1>Absences dans la Classe <?php echo $classe['nom_classe'] ?></h1>
+                                    <h1>Liste des notes dans la Classe <?php echo $classe['nom_classe'] ?></h1>
                                     <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                                    <h3>
+                                    <!-- <h3>
                                         Matiere: 
                                         <?php foreach ($matieres as $matiere): ?>
                                             <?= htmlspecialchars($matiere['nom_matiere']) ?>
                                         <?php endforeach; ?>
-                                    </h3>
+                                    </h3> -->
                                     <h3>Salle: <?php echo $classe['salle'] ?></h3>
                                 <?php endforeach; ?>
                             </div>
 
+                            <div class="periodes">
+                                <div class="periode-name">
+                                    <h3>Session d'examen</h3>
+                                </div>
+                                <div class="periodes-links">
+                                    <a class="active" href="./notes.php?id=<?php echo $id_classe ?>&s=1&m=Anglais">1 Trimèstre</a>
+                                    <a href="./notes.php?id=<?php echo $id_classe ?>&s=2&m=Anglais">2 Trimèstre</a>
+                                    <a href="./notes.php?id=<?php echo $id_classe ?>&s=3&m=Anglais">3 Trimèstre</a>
+                                </div>
+                            </div>
+
                             <div class="bd">
-                            <?php if (count($absences) > 0):  ?>
+                            
+                            <?php if (count($notes) > 0):  ?>
                                 <!-- Affichage de la liste des élèves -->
-                                <table class="table table-hover">
+                                
+
+                                <table class="table table-hover" id="tableNotes">
                                     <thead>
                                         <tr>
-                                            <th class="col">#</th>
-                                            <th class="col">Matricule</th>
-                                            <th class="col">Nom & Prénom</th>
-                                            <th class="col">Sexe</th>
-                                            <th class="col">Minutes</th>
-                                            <th></th>
+                                            <th>#</th>
+                                            <th>Matricule</th>
+                                            <th>Nom</th>
+                                            <th>Prénom</th>
+                                            <th>Sexe</th>
+                                            <th>DS1</th>
+                                            <th>DS2</th>
+                                            <th>Exam</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                    <?php foreach ( $absences as $absence ): 
-                                    
-                                    // Requête pour récupérer les absences de la classe
-                                    $sql_eleves = "SELECT eleve_id,
-                                                        numero,
-                                                        nom_eleve,
-                                                        prenom_eleve,
-                                                        sexe_eleve
-                                                    FROM eleves
-                                                    WHERE eleve_id = ?               
-                                    ";
-
-                                    $stmt_eleves = $pdo->prepare($sql_eleves);
-                                    $stmt_eleves->execute(
-                                        [
-                                            $absence['eleve_id']
-                                            ]
-                                    );
-                                    $eleves = $stmt_eleves->fetchAll();
-                                    
-                                    ?>
-                                    <tr>
-                                        <?php foreach ( $eleves as $eleve ): ?>
-                                            <!-- Numéro attribué -->
-                                            <th scope="row">
-                                                <?= $eleve['numero'] ?>
-                                            </th>
-
-                                             <!-- ID élève -->
-                                            <td>
-                                                <?= $eleve['eleve_id'] ?>
-                                            </td>
-
-                                            <!-- Nom et Prénom élève -->
-                                            <td>
-                                                <?= $eleve['nom_eleve'] ?>
-                                                <?= $eleve['prenom_eleve'] ?>
-                                            </td>
-
-                                             <!-- Sexe -->
-                                             <td>
-                                                <?= $eleve['sexe_eleve'] ?>
-                                            </td>
-                                        <?php endforeach; ?>
-                                       
-                                        <!-- Nom complet -->
-                                        <td>
-                                            <?= $absence['minutes'] ?> min
-                                        </td>
-                                        <td>
-                                            <div class="links">
-                                                <a href="./editabsence.php?id=<?= $id_classe ?>&idc=<?= $absence['absences_id'] ?>" class="btn btn-data">Modifier</a>
-                                                <a href="../back/absences/deleteAbsence.php?id=<?= $absence['absences_id'] ?>&idc=<?= $id_classe ?>" class="btn btn-data">Supprimer</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
+
+                                <script>
+                                document.getElementById('matiereSelect').addEventListener('change', function() {
+                                    let matiere_id = this.value;
+                                
+                                    if (!matiere_id) return;
+                                
+                                    fetch(`./get_notes_by_matiere.php?matiere_id=${matiere_id}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            let tbody = document.querySelector("#tableNotes tbody");
+                                            tbody.innerHTML = ""; // Vider le tableau
+                                        
+                                            data.forEach(note => {
+                                                let row = `
+                                                    <tr>
+                                                        <td>${note.numero}</td>
+                                                        <td>${note.eleve_id}</td>
+                                                        <td>${note.nom_eleve}</td>
+                                                        <td>${note.prenom_eleve}</td>
+                                                        <td>${note.sexe_eleve}</td>
+                                                        <td>${note.ds1 ?? ''}</td>
+                                                        <td>${note.ds2 ?? ''}</td>
+                                                        <td>${note.exam ?? ''}</td>
+                                                    </tr>
+                                                `;
+                                                tbody.innerHTML += row;
+                                            });
+                                        })
+                                        .catch(error => console.error("Erreur AJAX :", error));
+                                });
+                                </script>
+
+                                
                             <?php else: ?>
                             <!-- Message si aucun élève -->
                             <h5>Aucun matière trouvé</h5>
@@ -479,6 +517,45 @@
 
         <!-- Inclusion du JavaScript principal -->
         <script src="../assets/js/main.js"></script>
+
+        
+
     </body>
+    
+    <script>
+        // Fonction pour récupérer la valeur d'un paramètre GET dans l'URL
+        function getParameterByName(name) {
+          const url = window.location.href;
+          name = name.replace(/[\[\]]/g, '\\$&'); // échappe les crochets
+          const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+          const results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+    
+        // Récupérer la valeur du paramètre "s"
+        const s = getParameterByName('s');
+    
+        // Si 's' est défini, gérer la classe active
+        if (s) {
+          // Sélectionner tous les liens de session d'examen
+          const links = document.querySelectorAll('.periodes-links a');
+        
+          links.forEach(link => {
+            // Extraire la valeur du paramètre s dans le href du lien
+            const urlParams = new URLSearchParams(link.search);
+            const sValue = urlParams.get('s');
+
+            // Ajouter ou retirer la classe "active"
+            if (sValue === s) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+        }
+    </script>
+
 </html>
 

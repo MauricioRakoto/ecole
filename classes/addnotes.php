@@ -186,13 +186,13 @@
                             <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
                         </li>
                         <li>
-                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link active">Absences</a>
+                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
                         </li>
                         <li>
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
                         </li>
                         <li>
-                            <a href="./notes.html" class="nav-link">Notes</a>
+                            <a href="./notes.php?id=<?php echo $id_classe ?>" class="nav-link active">Notes</a>
                         </li>
                         <li><a href="./renvoyer.html" class="nav-link">Renvoyer</a></li>
                         <li><a href="index.php" class="nav-link">Bulletins</a></li>
@@ -205,17 +205,16 @@
             <?php if (count($classes) > 0):  ?>
                 <div class="tp" style="justify-content: normal; gap: 100px">
                     <div class="add notes">
-                        <a href="./absences.php?id=<?php echo $id_classe ?>" class="btn-add">Listes</a>
-                        <a href="./addabsences.php?id=<?php echo $id_classe ?>" class="btn-add active">Nouveaux</a>
+                        <a href="./notes.php?id=<?php echo $id_classe ?>&s=1&m=Anglais" class="btn-add">Listes</a>
+                        <a href="./addnotes.php?id=<?php echo $id_classe ?>" class="btn-add active">Nouveaux</a>
                     </div>
 
                     <div class="search">
-                            <form action="" method="GET">
-                                <input type="hidden" name="id" value="<?php echo $id_classe ?>">
-                                <input type="date" name="date" value="<?php echo isset($_GET['date']) ? htmlspecialchars($_GET['date']) : ''; ?>">
-
-                                <button type="submit">Rechercher</button>
-                            </form>
+                        <form action="" method="GET">
+                            <input type="hidden" name="id" value="<?php echo $id_classe ?>">
+                            <input type="date" name="date" value="<?php echo isset($_GET['date']) ? htmlspecialchars($_GET['date']) : ''; ?>">
+                            <button type="submit">Rechercher</button>
+                        </form>
 
                     </div>
                 
@@ -225,9 +224,8 @@
                 <div class="col-classe-l" style="margin-top: 20px;">
                     <?php foreach ( $classes as $classe ): ?>
                         <!-- Informations générales de la classe -->
-                        <h1>Ajouter des Absences dans la Classe <?php echo $classe['nom_classe'] ?></h1>
+                        <h1>Ajouter des notes dans la Classe <?php echo $classe['nom_classe'] ?></h1>
                         <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                        <h3>Matiere: Exemple</h3>
                         <h3>Salle: <?php echo $classe['salle'] ?></h3>
                     <?php endforeach; ?>
                 </div>
@@ -243,13 +241,26 @@
                     
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                            <form action="../back/absences/addAbsences.php" method="POST" class="d-block w-100 auto">
+                            <form action="../back/notes/addNotes.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 auto">
                                 <div class="tp-form" style="margin-top: 20px;">
+
+                                    <div class="form-group">
+                                    <div class="label">
+                                        <h4>Session d'examen</h4>
+                                    </div>
+                                    <div class="select">
+                                        <select name="session">
+                                            <option value="1">1 Trimèstre</option>
+                                            <option value="2">2 Trimèstre</option>
+                                            <option value="3">3 Trimèstre</option>
+                                        </select>
+                                    </div>
+                                    </div>
 
                                     <!-- Sélection matière -->
                                     <div class="form-group">
                                         <div class="label">
-                                            <h3>Matière</h3>
+                                            <h4>Matière</h4>
                                         </div>
                                         <div class="select">  
                                             <?php if (count($cours) > 0): ?>
@@ -263,6 +274,19 @@
                                                 <h5>Aucune matière trouvée</h5>
                                             <?php endif; ?>
                                         </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                    <div class="label">
+                                        <h4>Type d'examen</h4>
+                                    </div>
+                                    <div class="select">
+                                        <select name="type">
+                                            <option value="DS 1">DS 1</option>
+                                            <option value="DS 2">DS 2</option>
+                                            <option value="Exam">Exam</option>
+                                        </select>
+                                    </div>
                                     </div>
 
                                     <!-- Get Id matière -->
@@ -287,7 +311,7 @@
                                                 <th>Matricule</th>
                                                 <th>Nom & Prénom</th>
                                                 <th>Sexe</th>
-                                                <th>Minutes d'absence</th>
+                                                <th>Notes</th>
                                             </tr>
                                     </thead>
 
@@ -300,7 +324,7 @@
                                                 <td><?= $eleve['sexe_eleve'] ?></td>
                                                 <td>
                                                     <input type="hidden" name="eleve_id[]" value="<?= $eleve['eleve_id'] ?>">
-                                                    <input type="number" name="minutes[]" class="form-control" min="0" placeholder="minutes">
+                                                    <input type="number" name="notes[]" class="form-control" min="0" placeholder="Notes">
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

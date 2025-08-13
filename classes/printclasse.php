@@ -152,6 +152,28 @@
                 display: none;
             }
         }
+
+       /* Par défaut, on cache Date naissance (5), Status (6) et Notes (7) */
+table th:nth-child(5), table td:nth-child(5),
+table th:nth-child(6), table td:nth-child(6),
+table th:nth-child(7), table td:nth-child(7) {
+    display: none;
+}
+
+/* Quand on ajoute .show -> affichage */
+table th:nth-child(5).show, table td:nth-child(5).show,
+table th:nth-child(6).show, table td:nth-child(6).show,
+table th:nth-child(7).show, table td:nth-child(7).show {
+    display: table-cell;
+}
+
+/* Juste pour marquer le bouton actif */
+button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+
     </style>
 
     <!-- Liens vers les fichiers CSS -->
@@ -186,16 +208,19 @@
                         <div class="p-ttl"><h3>Classements</h3></div>
                         <div class="b-opt">
                             <div class="option">
-                                <button class="active" id="numberasc"></button>
+                                <button class="active" id="numberasc"> </button>
                                 <h4>N° Ascendant</h4>
+                               
                             </div>
                             <div class="option">
                                 <button id="numberdsc"></button>
                                 <h4>N° Dscendant</h4>
+                                
                             </div>
                             <div class="option">
-                                <button id="nomasc"></button>
+                                <button id="nomasc"> </button>
                                 <h4>Nom Ascendant</h4>
+                               
                             </div>
                             <div class="option">
                                 <button id="nomdsc"></button>
@@ -219,7 +244,7 @@
                 <!-- Tableau des élèves -->
                 <div class="bd">
                     <?php if (count($eleves) > 0):  ?>
-                        <table class="table">
+                        <table class="table" id="elevesTable">
                         <thead>
                             <tr>
                                 <th class="col">#</th>
@@ -234,31 +259,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ( $eleves as $eleve ): ?>
-                                <tr>
-                                    <th scope="row">
-                                        <?php 
-                                            // Affichage du numéro d'ordre (numéro dans la classe)
-                                            $numero = isset($eleve['numero']) ? (int) $eleve['numero'] : null;
-                                            echo $numero;
-                                        ?>
-                                    </th>
-                                    <td><?php echo $eleve['eleve_id'] ?></td>
-                                    <td><?php echo $eleve['nom_eleve'] ?> <?php echo $eleve['prenom_eleve'] ?></td>
-                                    <td><?php echo $eleve['sexe_eleve'] ?></td>
-                                    <td>
-                                        <?php 
-                                            $date_birth_d = new DateTime($eleve['date_naissance']);
-                                            $date_birth = $date_birth_d->format('d-m-Y');
-                                            echo $date_birth;
-                                        ?>
-                                    </td>
-                                    <td><?php echo $eleve['status']?></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            <?php endforeach; ?>
+                           
                         </tbody>
                         </table>
                     <?php else: ?>
@@ -268,9 +269,18 @@
                 </div>
 
                 <!-- Boutons d'action -->
-                <div class="bt" style="display: flex; gap: 10px;">
-                    <button class="btn btn-print" onclick="print()" style="background: #009CFF; width: 100px; height: 35px; color: #000;">Imprimer</button>
-                    <a style="height: 35px;" href="./eleves.php?id=<?php echo $id_classe ?>" class="btn return">Retour</a>
+                <div class="bt" style="margin-top: 30px;display: flex; gap: 10px;">
+                    <button class="btn btn-print" onclick="print()" style="background: #009CFF; width: 100px; height: 35px; color: #000;">
+                        Imprimer
+                    </button>
+                    <button class="btn btn-print" onclick="exportTableToExcel()" style="background: #009CFF; width: 200px; height: 35px; color: #000;">
+                        Exporter en Excel
+                    </button>
+
+                    <button class="btn btn-print" onclick="exportTableToPDF()" style="background: #009CFF; width: 200px; height: 35px; color: #000;">
+                        Exporter en PDF
+                    </button>
+                <a style="height: 35px;" href="./eleves.php?id=<?php echo $id_classe ?>" class="btn return">Retour</a>
                 </div>
             <?php else: ?>
                 <!-- Message si aucun classe trouvée -->
@@ -279,46 +289,168 @@
         </div>
     </div>
 
-    <!-- Script pour gérer l'affichage dynamique des colonnes -->
-<script>
-    const btnstatus = document.getElementById('btnstatus')
-    const btnDateBirth = document.getElementById("btndatebirth")
-    const btnNotes = document.getElementById('btnnotes')
+  
 
-    const table = document.querySelector('table')
-    const dateBirth = table.querySelectorAll('th:nth-child(5), td:nth-child(5)')
-    const status = table.querySelectorAll('th:nth-child(6), td:nth-child(6)')
-    const ds1 = table.querySelectorAll('table th:nth-child(7), table td:nth-child(7)')
-    const ds2 = table.querySelectorAll('table th:nth-child(8), table td:nth-child(8)')
-    const exam = table.querySelectorAll('table th:nth-child(9), table td:nth-child(9)')
+    <!-- Fichier JS principal -->
+    <script src="../../js/main.js"></script>
+    <script src="../assets/js/xlsx.full.min.js"></script>
+    <script src="../assets/js/jspdf.umd.min.js"></script>
+    <script src="../assets/js/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Transfert des données PHP vers JS
+        const elevesData = <?php echo json_encode($eleves); ?>;
+    </script>
 
-    // Fonction pour afficher/masquer la date de naissance
-    function toggleDateBirth () {
-        dateBirth.forEach(el => el.classList.toggle("show"))
-        btnDateBirth.classList.toggle('active')
+    <script>
+    const tbody = document.querySelector("tbody");
+
+    function renderEleves(data) {
+        tbody.innerHTML = ""; // Vider le tableau
+        data.forEach((eleve, index) => {
+            const dateNaissance = new Date(eleve.date_naissance).toLocaleDateString('fr-FR');
+
+            tbody.innerHTML += `
+                <tr>
+                    <th scope="row">${eleve.numero ?? ""}</th>
+                    <td>${eleve.eleve_id}</td>
+                    <td>${eleve.nom_eleve} ${eleve.prenom_eleve}</td>
+                    <td>${eleve.sexe_eleve}</td>
+                    <td>${dateNaissance}</td>
+                    <td>${eleve.status}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            `;
+        });
     }
 
-    // Fonction pour afficher/masquer le statut
-    function toggleStatus () {
-        status.forEach(el => el.classList.toggle("show"))
-        btnstatus.classList.toggle('active')
+
+
+    // Affichage initial
+    renderEleves(elevesData);
+
+    // Boutons
+    const btnNumberAsc = document.getElementById("numberasc");
+    const btnNumberDsc = document.getElementById("numberdsc");
+    const btnNomAsc = document.getElementById("nomasc");
+    const btnNomDsc = document.getElementById("nomdsc");
+
+    // Tri numéro ascendant
+    btnNumberAsc.addEventListener("click", () => {
+        const sorted = [...elevesData].sort((a, b) => (a.numero ?? 0) - (b.numero ?? 0));
+        renderEleves(sorted);
+    });
+
+    // Tri numéro descendant
+    btnNumberDsc.addEventListener("click", () => {
+        const sorted = [...elevesData].sort((a, b) => (b.numero ?? 0) - (a.numero ?? 0));
+        renderEleves(sorted);
+    });
+
+    // Tri nom ascendant
+    btnNomAsc.addEventListener("click", () => {
+        const sorted = [...elevesData].sort((a, b) => a.nom_eleve.localeCompare(b.nom_eleve));
+        renderEleves(sorted);
+    });
+
+    // Tri nom descendant
+    btnNomDsc.addEventListener("click", () => {
+        const sorted = [...elevesData].sort((a, b) => b.nom_eleve.localeCompare(a.nom_eleve));
+        renderEleves(sorted);
+    });
+
+
+
+    // Sélectionner tous les boutons de classement
+    const sortButtons = [
+        document.getElementById('numberasc'),
+        document.getElementById('numberdsc'),
+        document.getElementById('nomasc'),
+        document.getElementById('nomdsc')
+    ];
+
+    // Ajouter un gestionnaire d'événement à chacun
+    sortButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Supprimer la classe active de tous les boutons
+            sortButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Ajouter la classe active au bouton cliqué
+            button.classList.add('active');
+        });
+    });
+
+
+    </script>
+
+
+    <script>
+       function exportTableToExcel() {
+        const table = document.getElementById("elevesTable");
+        const workbook = XLSX.utils.table_to_book(table, { sheet: "Élèves" });
+        XLSX.writeFile(workbook, "liste_eleves.xlsx");
     }
+    </script>
 
-    // Fonction pour afficher/masquer les colonnes de notes
-    function toggleNotes () {
-        ds1.forEach(el => el.classList.toggle("show"))
-        ds2.forEach(el => el.classList.toggle("show"))
-        exam.forEach(el => el.classList.toggle("show"))
-        btnNotes.classList.toggle('active')
+    <script>
+    async function exportTableToPDF() {
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.text("Liste des élèves", 14, 15);
+
+    doc.autoTable({
+        html: '#elevesTable',
+        startY: 20,
+        styles: {
+            fontSize: 10,
+            cellPadding: 3
+        },
+        headStyles: {
+            fillColor: [0, 156, 255],
+            textColor: 0,
+            halign: 'center',
+            valign: 'middle'
+        },
+        bodyStyles: {
+            halign: 'left'
+        }
+    });
+
+    doc.save("liste_eleves.pdf");
     }
+    </script>
 
-    // Événements de clic
-    btnDateBirth.addEventListener('click', toggleDateBirth)
-    btnstatus.addEventListener('click', toggleStatus)
-    btnNotes.addEventListener('click', toggleNotes)
-</script>
+    <script>
 
-<!-- Fichier JS principal -->
-<script src="../../js/main.js"></script>
+const table = document.getElementById('elevesTable');
+
+const btnDateBirth = document.getElementById("btndatebirth");
+const btnstatus = document.getElementById('btnstatus');
+const btnnotes = document.getElementById('btnnotes');
+
+// Sélection colonnes
+const dateBirth = table.querySelectorAll('th:nth-child(5), td:nth-child(5)');
+const status = table.querySelectorAll('th:nth-child(6), td:nth-child(6)');
+const notes = table.querySelectorAll('th:nth-child(7), td:nth-child(7)');
+
+// Fonctions
+function toggleColumn(columnElements, button) {
+    columnElements.forEach(el => el.classList.toggle("show"));
+    button.classList.toggle('active');
+}
+
+// Événements
+btnDateBirth.addEventListener('click', () => toggleColumn(dateBirth, btnDateBirth));
+btnstatus.addEventListener('click', () => toggleColumn(status, btnstatus));
+btnnotes.addEventListener('click', () => toggleColumn(notes, btnnotes));
+
+
+    </script>
+
+
 </body>
 </html>

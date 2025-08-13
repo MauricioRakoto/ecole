@@ -48,6 +48,9 @@
                             <a href="#">Paramètre</a>
                         </li>
                         <li>
+                            <a href="./guides.php">Guides</a>
+                        </li>
+                        <li>
                             <a href="./back/responsable/logout.php">Se déconnecter</a>
                         </li>
                     </ul>

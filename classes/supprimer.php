@@ -98,6 +98,40 @@
             height: 60px; 
             border-radius: 50%;
         }
+
+        button.select {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+button.select::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: #007bff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.2s ease;
+}
+
+button.select.active {
+    background-color: #007bff;
+    border-color: #0056b3;
+}
+
+button.select.active::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
     </style>
 
 
@@ -182,7 +216,7 @@
                     <ul>
                         <!-- Liens vers les différentes pages liées à la classe -->
                         <li>
-                            <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link active">Eleves</a>
+                            <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
                         </li>
                         <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
                             <li>
@@ -205,7 +239,7 @@
                             <a href="./bulletins.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Bulletins</a>
                         </li>
                         <li>
-                            <a href="./supprimer.php?id=<?php echo $id_classe ?>" class="nav-link">Supprimer</a>
+                            <a href="./supprimer.php?id=<?php echo $id_classe ?>" class="nav-link active">Supprimer</a>
                         </li>
                     </ul>
                 </div>
@@ -218,7 +252,7 @@
                     <div class="col-classe-l">
                         <?php foreach ( $classes as $classe ): ?>
                             <!-- Informations générales de la classe -->
-                            <h1>Liste des Eleves dans la Classe <?php echo $classe['nom_classe'] ?></h1>
+                            <h1>Supprimer des Eleves dans la Classe <?php echo $classe['nom_classe'] ?></h1>
                             <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
                             <h3>Salle: <?php echo $classe['salle'] ?></h3>
                         <?php endforeach; ?>
@@ -227,55 +261,53 @@
 
                 <div class="bd">
                     <?php if (count($eleves) > 0):  ?>
-                        <!-- Affichage de la liste des élèves -->
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="col">#</th>
-                                    <th class="col">Matricule</th>
-                                    <th class="col">Nom & Prénom</th>
-                                    <th class="col">Sexe</th>
-                                    <th class="col">Absences</th>
-                                    <th class="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ( $eleves as $eleve ): ?>
-                                    <tr>
-                                        <th scope="row">
-                                            <?php echo !empty($eleve['numero']) ? $eleve['numero'] : 0; ?>
-                                        </th>
-                                        <!-- ID élève -->
-                                        <td>
-                                            <?php echo $eleve['eleve_id'] ?>
-                                        </td>
-                                        <!-- Nom complet -->
-                                        <td>
-                                            <?php echo $eleve['nom_eleve'] ?>
-                                            <?php echo $eleve['prenom_eleve'] ?>
-                                        </td>
-                                        <!-- Sexe -->
-                                        <td>
-                                            <?php echo $eleve['sexe_eleve'] ?>
-                                        </td>
-                                        <td class="absences-cell" data-eleve-id="<?= $eleve['eleve_id'] ?>"></td>
-                                        <!-- Lien vers détail -->
-                                        <td>
-                                            <a href="#" class="btn detail">Voir</a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                        <form action="../back/eleves/deleteEleves.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 auto">
+                            
+                            <div class="form-top">
+                                <button class="btn btn-primary" type="submit">
+                                    <span style="color: blue; margin-right: 10px">0</span>
+                                    Supprimer
+                                </button>
+                            </div>
+                        
+                            <table class="table table-hover" style="margin-top: 20px">
+                                <thead>
+                                            <tr>
+                                                <th class="col"></th>
+                                                <th class="col">#</th>
+                                                <th class="col">Matricule</th>
+                                                <th class="col">Nom & Prénom</th>
+                                                <th class="col">Sexe</th>
+                                                <th class="col"></th>
+                                            </tr>
+                                </thead>
+                                <tbody>
+                                            
+                                            <?php foreach ( $eleves as $eleve ): ?>
+                                                <tr>
+                                                    <th>
+                                                        <button type="button" class="select"></button>
+                                                    </th>
+                                                    <th><?= $eleve['numero'] ?: 0 ?></th>
+                                                    <td><?= $eleve['eleve_id'] ?></td>
+                                                    <td><?= $eleve['nom_eleve'] ?> <?= $eleve['prenom_eleve'] ?></td>
+                                                    <td><?= $eleve['sexe_eleve'] ?></td>
+                                                   
+                                                </tr>
+                                            
+                                            <?php endforeach; ?>
+                                        
+                                </tbody>
+                            </table>
+                            
+                        </form> 
+
                     <?php else: ?>
-                        <!-- Message si aucun élève -->
                         <h5>Aucun élève trouvé</h5>
-                    <?php endif; ?>
+                    <?php endif; ?>  
                 </div>
-                            <!-- Bouton pour imprimer la liste de la classe -->
-                            <div class="bt">
-                    <a href="./printclasse.php?id=<?php echo $id_classe ?>" class="btn btn-print">Imprimer</a>
-                </div>
+                           
+                            
             <?php else: ?>
                 <!-- Message si aucune classe trouvée -->
                 <h5>Aucun classe trouvé</h5>
@@ -301,6 +333,56 @@
             });
         });
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectButtons = document.querySelectorAll('button.select');
+    const compteurSpan = document.querySelector('.form-top span');
+    const form = document.querySelector('form');
+    let selectedEleves = new Set(); // pour stocker les eleve_id sélectionnés
+
+    selectButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const row = button.closest('tr');
+            const eleveId = row.querySelector('td:nth-child(3)').textContent;
+
+            if (button.classList.contains('active')) {
+                button.classList.remove('active');
+                selectedEleves.delete(eleveId);
+            } else {
+                button.classList.add('active');
+                selectedEleves.add(eleveId);
+            }
+
+            // Mettre à jour le compteur
+            compteurSpan.textContent = selectedEleves.size;
+        });
+    });
+
+    // Avant la soumission du formulaire, ajouter les eleve_id sélectionnés en input hidden
+    form.addEventListener('submit', function(e) {
+        // Supprimer les anciens inputs si existants
+        const oldInputs = form.querySelectorAll('input[name="eleves[]"]');
+        oldInputs.forEach(input => input.remove());
+
+        // Ajouter un input hidden pour chaque eleve_id sélectionné
+        selectedEleves.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'eleves[]';
+            input.value = id;
+            form.appendChild(input);
+        });
+
+        // Si aucun élève sélectionné, empêcher la soumission
+        if (selectedEleves.size === 0) {
+            e.preventDefault();
+            alert("Veuillez sélectionner au moins un élève à supprimer.");
+        }
+    });
+});
+</script>
+
 
 
     </body>
