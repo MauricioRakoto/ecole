@@ -333,7 +333,12 @@
                             <a href="./notes.php?id=<?php echo $id_classe ?>" class="nav-link active">Notes</a>
                         </li>
                         <li><a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a></li>
-                        <li><a href="index.php" class="nav-link">Bulletins</a></li>
+                        <li>
+                            <a href="./bulletins.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Bulletins</a>
+                        </li>
+                        <li>
+                            <a href="./supprimer.php?id=<?php echo $id_classe ?>" class="nav-link">Supprimer</a>
+                        </li>
                     </ul>
                 </div>
                 </nav>
@@ -400,7 +405,7 @@
                                         <h4>Matière</h4>
                                     </div>
                                     <div class="select" >
-                                        <select name="matiere_id" id="matiereSelect" onchange="fetchNotesByMatiere()">
+                                        <select name="matiere_id" id="matiereSelect">
                                             <option value="">-- Sélectionnez une matière --</option>
                                             <?php foreach ($cours as $cour): ?>
                                                 <option value="<?= $cour['matiere_id'] ?>">
@@ -435,9 +440,9 @@
                                     <h3>Session d'examen</h3>
                                 </div>
                                 <div class="periodes-links">
-                                    <a class="active" href="./notes.php?id=<?php echo $id_classe ?>&s=1&m=Anglais">1 Trimèstre</a>
-                                    <a href="./notes.php?id=<?php echo $id_classe ?>&s=2&m=Anglais">2 Trimèstre</a>
-                                    <a href="./notes.php?id=<?php echo $id_classe ?>&s=3&m=Anglais">3 Trimèstre</a>
+                                    <a class="active" href="./notes.php?id=<?php echo $id_classe ?>&s=1">1 Trimèstre</a>
+                                    <a href="./notes.php?id=<?php echo $id_classe ?>&s=2">2 Trimèstre</a>
+                                    <a href="./notes.php?id=<?php echo $id_classe ?>&s=3">3 Trimèstre</a>
                                 </div>
                             </div>
 
@@ -464,35 +469,7 @@
                                 </table>
 
                                 <script>
-                                document.getElementById('matiereSelect').addEventListener('change', function() {
-                                    let matiere_id = this.value;
-                                
-                                    if (!matiere_id) return;
-                                
-                                    fetch(`./get_notes_by_matiere.php?matiere_id=${matiere_id}`)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            let tbody = document.querySelector("#tableNotes tbody");
-                                            tbody.innerHTML = ""; // Vider le tableau
-                                        
-                                            data.forEach(note => {
-                                                let row = `
-                                                    <tr>
-                                                        <td>${note.numero}</td>
-                                                        <td>${note.eleve_id}</td>
-                                                        <td>${note.nom_eleve}</td>
-                                                        <td>${note.prenom_eleve}</td>
-                                                        <td>${note.sexe_eleve}</td>
-                                                        <td>${note.ds1 ?? ''}</td>
-                                                        <td>${note.ds2 ?? ''}</td>
-                                                        <td>${note.exam ?? ''}</td>
-                                                    </tr>
-                                                `;
-                                                tbody.innerHTML += row;
-                                            });
-                                        })
-                                        .catch(error => console.error("Erreur AJAX :", error));
-                                });
+                               
                                 </script>
 
                                 
@@ -518,7 +495,6 @@
         <!-- Inclusion du JavaScript principal -->
         <script src="../assets/js/main.js"></script>
 
-        
 
     </body>
     
@@ -555,6 +531,42 @@
             }
           });
         }
+
+        const id = getParameterByName('id');
+
+        console.log(id)
+
+
+        document.getElementById('matiereSelect').addEventListener('change', function() {
+            let matiere_id = this.value;
+        
+            if (!matiere_id) return;
+                                
+            fetch(`./get_notes_by_matiere.php?id=${id}&m=${matiere_id}&s=${s}`)
+                .then(response => response.json())
+                .then(data => {
+                let tbody = document.querySelector("#tableNotes tbody");
+                tbody.innerHTML = ""; // Vider le tableau
+                                        
+                data.forEach(note => {
+                let row = `
+                    <tr>
+                        <td>${note.numero}</td>
+                        <td>${note.eleve_id}</td>
+                        <td>${note.nom_eleve}</td>
+                        <td>${note.prenom_eleve}</td>
+                        <td>${note.sexe_eleve}</td>
+                        <td>${note.ds1 ?? ''}</td>
+                        <td>${note.ds2 ?? ''}</td>
+                        <td>${note.exam ?? ''}</td>
+                    </tr>
+                    `;
+                tbody.innerHTML += row;
+                });
+            })
+
+        .catch(error => console.error("Erreur AJAX :", error));
+        });
     </script>
 
 </html>

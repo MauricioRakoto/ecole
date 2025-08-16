@@ -32,7 +32,7 @@ JOIN matieres m ON n.matiere_id = m.matiere_id
 WHERE n.session = ?  
   AND e.eleve_id = ?   
 GROUP BY m.nom_matiere, m.coefficient
-ORDER BY m.nom_matiere;
+ORDER BY m.matiere_id;
 ";
 
 $stmt = $pdo->prepare($sql);

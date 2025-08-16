@@ -22,9 +22,9 @@
     $comptes = $stmt_compte->fetchAll();
 
     // Requête pour récupérer les informations de la classe
-    $sql_classes = "SELECT * FROM classes WHERE classe_id = ? ";
+    $sql_classes = "SELECT * FROM classes";
     $stmt_classes = $pdo->prepare($sql_classes);
-    $stmt_classes->execute([$id_classe]);
+    $stmt_classes->execute([]);
     $classes = $stmt_classes->fetchAll();
 
     // Requête pour récupérer les élèves de la classe
@@ -74,13 +74,19 @@
         }
 
         table th:nth-child(2),
-        table td:nth-child(2) {
+        table td:nth-child(2),
+        table th:nth-child(3),
+        table td:nth-child(3),
+        table th:nth-child(4),
+        table td:nth-child(4),
+        table th:nth-child(5),
+        table td:nth-child(5) {
             width: 1%;
         }
 
-        table th:nth-child(3),
-        table td:nth-child(3) {
-            width: 35%;
+        table th:nth-child(6),
+        table td:nth-child(6) {
+            width: 13%;
         }
 
         button.icone {
@@ -228,71 +234,66 @@
             </div>
 
             <div class="col-right">
-            <?php if (count($classes) > 0):  ?>
+            
                 <div class="tp">
-                    <div class="col-classe-l">
-                        <?php foreach ( $classes as $classe ): ?>
-                            <!-- Informations générales de la classe -->
-                            <h1>Supprimer des Eleves dans la Classe <?php echo $classe['nom_classe'] ?></h1>
-                            <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                            <h3>Salle: <?php echo $classe['salle'] ?></h3>
-                        <?php endforeach; ?>
+                <div class="add" style="display: flex; gap: 20px">
+                        <a href="./add.php" class="btn-add">Nouveau</a>
+                        <a class="btn-add" href="./actionsclasses.php">Actions</a>
                     </div>
                 </div>
 
                 <div class="bd">
-                    <?php if (count($eleves) > 0):  ?>
-                        <form action="../back/eleves/deleteEleves.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 auto">
+                   
+                    <form action="../back/classes/deleteClasses.php" method="POST" class="d-block w-100 auto">
                             
-                            <div class="form-top">
+                        <div class="form-top">
                                 <button class="btn btn-primary" type="submit">
                                     <span style="color: blue; margin-right: 10px">0</span>
                                     Supprimer
                                 </button>
-                            </div>
-                        
-                            <table class="table table-hover" style="margin-top: 20px">
+                        </div>
+                    
+                        <table class="table table-hover" style="margin-top: 20px">
                                 <thead>
-                                            <tr>
-                                                <th class="col"></th>
-                                                <th class="col">#</th>
-                                                <th class="col">Matricule</th>
-                                                <th class="col">Nom & Prénom</th>
-                                                <th class="col">Sexe</th>
-                                                <th class="col"></th>
-                                            </tr>
+                                    <tr>
+                                        <th class="col"></th>
+                                        <th class="col">N°</th>
+                                        <th class="col">Classe</th>
+                                        <th class="col">Effectifs</th>
+                                        <th class="col">Niveau</th>
+                                        <th class="col">Année Scolaire</th>
+                                        <th class="col"></th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                             
-                                            <?php foreach ( $eleves as $eleve ): ?>
-                                                <tr>
-                                                    <th>
-                                                        <button type="button" class="select"></button>
-                                                    </th>
-                                                    <th><?= $eleve['numero'] ?: 0 ?></th>
-                                                    <td><?= $eleve['eleve_id'] ?></td>
-                                                    <td><?= $eleve['nom_eleve'] ?> <?= $eleve['prenom_eleve'] ?></td>
-                                                    <td><?= $eleve['sexe_eleve'] ?></td>
-                                                   
-                                                </tr>
-                                            
-                                            <?php endforeach; ?>
+                                <?php foreach ( $classes as $classe ): ?>
+                                    <tr>
+                                        <th>
+                                            <button type="button" class="select"></button>
+                                        </th>
+                                        <td><?= $classe['classe_id'] ?></td>
+                                        <td><?= $classe['nom_classe'] ?></td>
+                                        <td>0</td>
+                                        <td><?= $classe['niveau'] ?></td>
+                                        <td><?= $classe['annee_debut'] ?> - <?= $classe['annee_fin'] ?></td>
+                                        <td>
+                                            <a href="./editclasse.php?id=<?= $classe['classe_id'] ?>" class="btn btn-primary">Modifier</a>
+                                        </td>
+                                    </tr>
+                                
+                                <?php endforeach; ?>
                                         
                                 </tbody>
-                            </table>
+                        </table>
                             
-                        </form> 
+                    </form> 
 
-                    <?php else: ?>
-                        <h5>Aucun élève trouvé</h5>
-                    <?php endif; ?>  
+                  
                 </div>
                            
                             
-            <?php else: ?>
-                <!-- Message si aucune classe trouvée -->
-                <h5>Aucun classe trouvé</h5>
-            <?php endif; ?>
+            
             </div>
         </div>
 
@@ -322,12 +323,10 @@
                 const form = document.querySelector('form');
                 let selectedEleves = new Set(); // pour stocker les eleve_id sélectionnés
 
-                console.log(selectedEleves)
-
                 selectButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         const row = button.closest('tr');
-                        const eleveId = row.querySelector('td:nth-child(3)').textContent;
+                        const eleveId = row.querySelector('td:nth-child(2)').textContent;
                     
                         if (button.classList.contains('active')) {
                             button.classList.remove('active');
@@ -345,14 +344,14 @@
                 // Avant la soumission du formulaire, ajouter les eleve_id sélectionnés en input hidden
                 form.addEventListener('submit', function(e) {
                     // Supprimer les anciens inputs si existants
-                    const oldInputs = form.querySelectorAll('input[name="eleves[]"]');
+                    const oldInputs = form.querySelectorAll('input[name="classes[]"]');
                     oldInputs.forEach(input => input.remove());
                 
                     // Ajouter un input hidden pour chaque eleve_id sélectionné
                     selectedEleves.forEach(id => {
                         const input = document.createElement('input');
                         input.type = 'hidden';
-                        input.name = 'eleves[]';
+                        input.name = 'classes[]';
                         input.value = id;
                         form.appendChild(input);
                     });

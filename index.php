@@ -105,7 +105,7 @@
         </div>
         <div class="col-md-6">
           <div class="image" style="width: 100%; height: 400px; border-radius: 10px;background: #d3cad9;">
-            
+            <img style="width: 100%; height: 100%" src="./assets/img/bulletins.png" alt="">
           </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
         
         <div class="col-md-6">
           <div class="image" style="width: 100%; height: 400px; border-radius: 10px;background: #d3cad9;">
-            
+            <img style="width: 100%; height: 100%" src="./assets/img/bulletin.png" alt="">
           </div>
         </div>
 

@@ -288,11 +288,14 @@
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
                         </li>
                         <li>
-                            <a href="./notes.html" class="nav-link">Notes</a>
+                            <a href="./notes.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Notes</a>
                         </li>
                         <li><a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a></li>
                         <li>
                             <a href="./bulletins.php?id=<?php echo $id_classe ?>" class="nav-link active">Bulletins</a>
+                        </li>
+                        <li>
+                            <a href="./supprimer.php?id=<?php echo $id_classe ?>" class="nav-link">Supprimer</a>
                         </li>
                     </ul>
                 </div>
@@ -363,6 +366,23 @@
                             </div>
 
                             <div class="bd">
+                            <table class="table table-hover" id="table-eleves">
+                                <thead>
+                                    <tr>
+                                        <th>Rang</th>
+                                        <th>Numéro</th>
+                                        <th>Nom</th>
+                                        <th>Sexe</th>
+                                        <th>Moyenne</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody >
+
+                                </tbody>
+                                
+                            </table>
+
                             <div id="notesContainer"></div>
 
                     <script>
@@ -381,147 +401,71 @@
                         const id = getParameterByName('id');
                         const s = getParameterByName('s');
                     
-                        if (id && s) {
-                          fetch(`get_notes.php?id=${id}&s=${s}`)
-                            .then(response => response.json())
-                            .then(data => {
-                              if (data.error) {
-                                document.getElementById('notesContainer').innerHTML = `<p>Erreur: ${data.error}</p>`;
-                                return;
-                              }
-                              afficherNotes(data);
-                            })
-                            .catch(error => {
-                              document.getElementById('notesContainer').innerHTML = `<p>Erreur réseau: ${error}</p>`;
-                            });
-                        } else {
-                          document.getElementById('notesContainer').innerHTML = `<p>Paramètres URL manquants.</p>`;
-                        }
-                    
-                        // Fonction pour afficher les notes
-                        function afficherNotes(data) {
-                        const container = document.getElementById('notesContainer');
-                        let html = `
-                          <table class="table table-hover">
-                            <thead>
-                              <tr>
-                                <th>#</th>
-                                <th>Matricule</th>
-                                <th>Nom et Prénom</th>
-                                <th>Sexe</th>
-                                <th>Note</th>
-                                <th></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                        `;
+                        function afficherNote(data) {
+// Pour chaque élève
+    data.forEach(eleve => {
+        let sommeTotaux = 0;
+        let totalCoef = 0;
+        let nombreMatieres = eleve.matieres.length; // nombre de matières de cet élève
 
-                        data.forEach(eleve => {
-                          // Pour afficher les notes, on va concaténer toutes les notes dans une cellule
-                          let notesHTML = eleve.notes.map(note => `${note.note}`).join('<br>');
-                        
-                          html += `
-                            <tr>
-                              <td>${eleve.numero}</td>
-                              <td>${eleve.eleve_id}</td>
-                              <td>${eleve.nom_eleve} ${eleve.prenom_eleve}</td>
-                              <td>${eleve.sexe_eleve}</td>
-                              <td>${notesHTML}</td>
-                              <td>
-                                <a class='btn btn-primary' href='./bulletin.php?id=${id}&ide=${eleve.eleve_id}&s=${s}'>Voir</a>
-                              </td>
-                            </tr>
-                          `;
-                        });
-                    
-                        html += `
-                            </tbody>
-                          </table>
-                        `;
-                    
-                        container.innerHTML = html;
-                        }
+        eleve.matieres.forEach(note => {
+            let coef = parseFloat(note.coefficient) || 0;
+            totalCoef += coef;
 
-                    </script>
+            let ds1 = parseFloat(note.ds1) || 0;
+            let ds2 = parseFloat(note.ds2) || 0;
+            let exam = parseFloat(note.exam) || 0;
 
-                            <?php if (count($absences) > 0):  ?>
-                                <!-- Affichage de la liste des élèves -->
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="col">#</th>
-                                            <th class="col">Matricule</th>
-                                            <th class="col">Nom & Prénom</th>
-                                            <th class="col">Sexe</th>
-                                            <th class="col">Minutes</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php foreach ( $absences as $absence ): 
-                                    
-                                    // Requête pour récupérer les absences de la classe
-                                    $sql_eleves = "SELECT eleve_id,
-                                                        numero,
-                                                        nom_eleve,
-                                                        prenom_eleve,
-                                                        sexe_eleve
-                                                    FROM eleves
-                                                    WHERE eleve_id = ?               
-                                    ";
+            // Calcul DS total (moyenne des DS)
+            let dsTotal = (ds1 + ds2) / 2;
 
-                                    $stmt_eleves = $pdo->prepare($sql_eleves);
-                                    $stmt_eleves->execute(
-                                        [
-                                            $absence['eleve_id']
-                                            ]
-                                    );
-                                    $eleves = $stmt_eleves->fetchAll();
-                                    
-                                    ?>
-                                    <tr>
-                                        <?php foreach ( $eleves as $eleve ): ?>
-                                            <!-- Numéro attribué -->
-                                            <th scope="row">
-                                                <?= $eleve['numero'] ?>
-                                            </th>
+            // Pondération par coefficient
+            let dsTotalCof = dsTotal * coef;
+            let examCof = exam * coef;
 
-                                             <!-- ID élève -->
-                                            <td>
-                                                <?= $eleve['eleve_id'] ?>
-                                            </td>
+            // Total matière (comme ton modèle)
+            let totalNoteMat = (dsTotalCof + examCof) / 3;
+            totalNoteMat = Math.round(totalNoteMat);
 
-                                            <!-- Nom et Prénom élève -->
-                                            <td>
-                                                <?= $eleve['nom_eleve'] ?>
-                                                <?= $eleve['prenom_eleve'] ?>
-                                            </td>
+            sommeTotaux += totalNoteMat;
+        });
 
-                                             <!-- Sexe -->
-                                             <td>
-                                                <?= $eleve['sexe_eleve'] ?>
-                                            </td>
-                                        <?php endforeach; ?>
-                                       
-                                        <!-- Nom complet -->
-                                        <td>
-                                            <?= $absence['minutes'] ?> min
-                                        </td>
-                                        <td>
-                                            <div class="links">
-                                                <a href="./editabsence.php?id=<?= $id_classe ?>&idc=<?= $absence['absences_id'] ?>" class="btn btn-data">Modifier</a>
-                                                <a href="../back/absences/deleteAbsence.php?id=<?= $absence['absences_id'] ?>&idc=<?= $id_classe ?>" class="btn btn-data">Supprimer</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            <?php else: ?>
-                            <!-- Message si aucun élève -->
-                            <h5>Aucun élèves trouvé</h5>
-                                <?php endif; ?>
-                            </div>
+        // Moyenne générale
+        eleve.moyenneGenerale = nombreMatieres > 0 ? (sommeTotaux / nombreMatieres).toFixed(2) : 0;
+    });
+
+    // Tri décroissant par moyenne générale
+    data.sort((a, b) => b.moyenneGenerale - a.moyenneGenerale);
+
+    // Affichage dans le tableau
+    let tbody = document.querySelector("#table-eleves tbody");
+    tbody.innerHTML = "";
+
+    data.forEach((e, index) => {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${e.numero}</td>
+            <td>${e.nom_eleve} ${e.prenom_eleve}</td>
+            <td>${e.sexe_eleve}</td>
+            <td>${e.moyenneGenerale}</td>
+            <td>
+                <a class="btn btn-primary" href='./bulletin.php?id=${e.classe_id}&ide=${e.eleve_id}&s=${s}&r=${index + 1}'>Voir</a>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+if (id && s) {
+    fetch(`get_notes.php?id=${id}&s=${s}`)
+        .then(res => res.json())
+        .then(data => afficherNote(data))
+        .catch(err => console.error("Erreur AJAX:", err));
+}
+                        </script>
+
+                           
                             <!-- Bouton pour imprimer la liste de la classe -->
                         <?php endif; ?>
                     

@@ -19,12 +19,104 @@
     <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="./assets/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/auth.css">
+    <style>
+        
+        form.auth .auth-content {
+            width: 100%;
+            padding: 0;
+        }
+
+        form.auth .auth-content .f-tp .ttl h3 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        form.auth .auth-content .f-tp .links {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        form.auth .auth-content .f-tp .links a.link {
+            position: relative;
+            width: 50%;
+            height: 30px;
+            color: #000;
+            text-decoration: none;
+            padding: 0;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 1s ease-in-out;
+        }
+
+        form.auth .auth-content .f-tp .links a.link::after {
+            position: absolute;
+            content: "";
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            transition: 1s ease-in-out;
+        }
+
+        form.auth .auth-content .f-tp .links a.link.active,
+        form.auth .auth-content .f-tp .links a.link:hover {
+            color: #009CFF;
+        }
+
+        form.auth .auth-content .f-tp .links a.link.active::after,
+        form.auth .auth-content .f-tp .links a.link:hover::after {
+            background: #009CFF;
+        }
+
+        form.auth .auth-content .f-tp .links a.link.active:hover {
+            color: #000;
+        }
+
+        form.auth .auth-content .f-tp .links a.link.active:hover::after {
+            background: #000;
+        }
+
+        form.auth .auth-content .f-bd {
+            margin-top: 20px;
+    }
+
+        form.auth .auth-content .f-bd .form-group {
+            margin-bottom: 15px;
+        }
+
+        form.auth .auth-content .f-bd .form-group .label h4 {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        form.auth .auth-content .f-bd .form-group .input input,
+        form.auth .auth-content .f-bd .form-group .select select {
+            width: 100%;
+            height: 35px;
+            border: 1px solid #009CFF;
+            border-radius: 3px;
+            padding: 5px 10px;
+        }
+
+        form.auth .auth-content .f-bt {
+            margin-top: 30px;
+        }
+
+        form.auth .auth-content .f-bt button {
+            width: 100%;
+            height: 40px;
+            background: #009CFF;
+            border-radius: 5px;
+            border: 0;
+        }
+
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="row" style="justify-content: center;">
            
-            <form method="POST" action="./back/responsable/signin.php" class="auth" style="height:  340px;">
+            <form method="POST" action="./back/responsable/signin.php" class="auth" style="width: 360px; height:  340px; background: none">
                 <div class="auth-content">
                     <div class="f-tp">
                         <div class="ttl">

@@ -201,10 +201,15 @@
                             <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link active">Cours</a>
                         </li>
                         <li>
-                            <a href="./notes.html" class="nav-link">Notes</a>
+                            <a href="./notes.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Notes</a>
                         </li>
                         <li><a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a></li>
-                        <li><a href="index.php" class="nav-link">Bulletins</a></li>
+                        <li>
+                            <a href="./bulletins.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Bulletins</a>
+                        </li>
+                        <li>
+                            <a href="./supprimer.php?id=<?php echo $id_classe ?>" class="nav-link">Supprimer</a>
+                        </li>
                     </ul>
                 </div>
                 </nav>

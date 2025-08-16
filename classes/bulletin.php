@@ -13,13 +13,23 @@
     }
 
     // Récupération de l'ID de la classe depuis l'URL (GET)
-    $id_classe = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+    $ide = isset($_GET['id']) ? (int) $_GET['ide'] : 0;
 
      // Requête pour récupérer les informations de la classe
-     $sql_classes = "SELECT * FROM classes WHERE classe_id = ? ";
+     $sql_classes = "SELECT e.eleve_id,
+                            e.numero,
+                            e.nom_eleve,
+                            e.prenom_eleve,
+                            e.sexe_eleve,
+                            e.annee_scolaire,
+                            c.nom_classe,
+                            c.niveau
+                    FROM eleves e
+                    INNER JOIN classes  c ON e.classe_id =  c.classe_id
+                        WHERE e.eleve_id = ? ";
      $stmt_classes = $pdo->prepare($sql_classes);
-     $stmt_classes->execute([$id_classe]);
-     $classes = $stmt_classes->fetchAll();
+     $stmt_classes->execute([$ide]);
+     $eleves = $stmt_classes->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -30,27 +40,57 @@
     <title>Ecole</title>
     <!-- Bootstrap 5 CSS -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet">
+
+    <style>
+         @media print {
+            .btns {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container my-5">
-        <?php if (count($classes) > 0): ?> 
-            <?php foreach ( $classes as $classe ): ?>
+        <?php if (count($eleves) > 0): ?> 
+            <?php foreach ( $eleves as $eleve ): ?>
             <div class="col-classe-l">
-            <div class="notes-top mb-4">
-                <h1 class="mb-3" id="bulletinTitle">Bulletin des notes 1è Trimestre <?php echo $classe['nom_classe'] ?></h1>
-                <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?></h3>
-            </div>
+                <div class="notes-top mb-4">
+                    <h1>Nom de l'établissement</h1>
+                    <h1 id="bulletinTitle">Bulletin des notes 1è Trimestre dans la<?= $eleve['nom_classe'] ?></h1>
+                    <h3>Année Scolaire: <?= $eleve['annee_scolaire'] ?></h3>
+                </div>
 
-            <div class="eleve-top mb-4 row">
-                <div class="col-md-3 mb-2"><h5>Matricule: 1</h5></div>
-                <div class="col-md-3 mb-2"><h5>Nom et Prénom: Exemple</h5></div>
-                <div class="col-md-3 mb-2"><h5>Classe: Exemple</h5></div>
-                <div class="col-md-3 mb-2"><h5>Nombre d'absences: 0</h5></div>
-            </div>
+                <div class="eleve-top row">
 
-            <div id="notesContainer">
+                        <h6>Nom et Prénom: <?= $eleve['nom_eleve'] ?> <?= $eleve['prenom_eleve'] ?></h6>
+                        <h6>Matricule: <?= $eleve['eleve_id'] ?></h4>
+                        <h6>Nombre d'absences: 0</h6>
+                    </div>
+                
 
-            </div>
+                </div>
+
+                <div id="notesContainer">
+
+                </div>
+                <div class="bottom">
+                    <div class="btn-options row">
+                        <div class="col-6">
+                            <span>Chéf d'établissement</span>
+                        </div>
+                        <div class="col-6" style="position: relative">
+                            <div class="p" style="position: absolute; right: 0">
+                                <span>Parents</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="btns" style="margin-top: 0px">
+                        <button  onclick="print()">Imprimer</button>
+                    </div>
+                    
+                </div>
             </div>
         <?php endforeach; ?>
 
@@ -59,66 +99,6 @@
         <h5>Aucun classe trouvé</h5>
         <?php endif; ?>
     </div>
-
-    <!-- <script>
-        async function fetchNotes() {
-            // Récupérer idc et s depuis l'URL
-            const params = new URLSearchParams(window.location.search);
-            const idc = params.get('idc');
-            const s = params.get('s') || 1;
-        
-            const response = await fetch(`get_notes_bulletin.php?idc=${idc}&s=${s}`);
-            const data = await response.json();
-        
-            afficherNotes(data);
-        }
-
-        function afficherNotes(data) {
-            const container = document.getElementById('notesContainer');
-            let html = '';
-        
-            data.forEach(eleve => {
-                html += `<h3>${eleve.nom_eleve} ${eleve.prenom_eleve} (Matricule: ${eleve.numero})</h3>`;
-                html += `
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Matière</th>
-                            <th>DS 1</th>
-                            <th>DS 2</th>
-                            <th>Moyenne DS</th>
-                            <th>Exam</th>
-                            <th>Coef</th>
-                            <th>Total</th>
-                            <th>Appréciations</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                `;
-            
-                eleve.notes.forEach(note => {
-                    html += `
-                        <tr>
-                            <td>${note.nom_matiere}</td>
-                            <td>${note.ds1 ?? ''}</td>
-                            <td>${note.ds2 ?? ''}</td>
-                            <td>${note.moyenne_ds ?? ''}</td>
-                            <td>${note.exam ?? ''}</td>
-                            <td>${note.coef ?? ''}</td>
-                            <td>${note.total ?? ''}</td>
-                            
-                        </tr>
-                    `;
-                });
-            
-                html += `</tbody></table>`;
-            });
-        
-            container.innerHTML = html;
-        }
-
-        fetchNotes();
-    </script> -->
 
     <script>
         // Fonction pour récupérer un paramètre dans l'URL
@@ -260,7 +240,7 @@ if (sessionS) {
         default:
             sessionText = "Trimestre inconnu";
     }
-    bulletinTitle.textContent = `Bulletin des notes ${sessionText} ${<?php echo json_encode($classe['nom_classe']); ?>}`;
+    bulletinTitle.textContent = `Bulletin des notes ${sessionText} ${<?php echo json_encode($eleve['nom_classe']); ?>}`;
 }
         
 
