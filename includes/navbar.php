@@ -1,13 +1,13 @@
 <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
     <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-        <img src="./assets/img/logo-ecole" alt="logo" style="width: 35px">
+        <img src="http://<?= $host ?>/app-ecole/assets/img/logo-ecole" alt="logo" style="width: 35px">
         <h3 style="font-size: 20px">Ecole</h3>
     </a>
     <div class="menu">
             <?php foreach ( $comptes as $compte ): ?>
             <button class="icone" id="menu" style="border: 0; background: none; overflow: hidden">
                 <?php if (!empty($compte['image'])): ?>
-                    <img src="./assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
+                    <img src="http://<?= $host ?>/app-ecole/assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
                 <?php else: ?>
                     M
                 <?php endif; ?>
@@ -22,7 +22,7 @@
                     <?php foreach ( $comptes as $compte ): ?>
                         <?php if (!empty($compte['image'])): ?>
                             <div class="photo">
-                                <img src="./assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
+                                <img src="http://<?= $host ?>/app-ecole/assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
                             </div>
                             <?php else: ?>
                                 <div class="image">

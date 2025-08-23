@@ -31,37 +31,7 @@
 <!-- Début du document HTML -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <!-- Encodage des caractères -->
-    <meta charset="UTF-8">
-    <!-- Compatibilité avec Internet Explorer -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Configuration du viewport pour mobile -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Titre de la page -->
-    <title>Students</title>
-    <!-- Inclusion du CSS Bootstrap -->
-    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Inclusion du fichier CSS personnalisé -->
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <style>
-         button.icone {
-            border: 0;
-         }
-
-        button.icone img {
-            width: 30px; 
-            height: 30px; 
-            border-radius: 50%;
-        }
-
-        .photo img {
-            width: 60px; 
-            height: 60px; 
-            border-radius: 50%;
-        }
-    </style>
-</head>
+<?php require '../includes/head.php' ?>
 <body>
 
     <!-- Formulaire modal pour l'ajout de nouvelle classe -->
@@ -129,66 +99,7 @@
         </form>
     </div>
 
-    <!-- Barre de navigation supérieure -->
-    <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
-        <!-- Logo et titre -->
-        <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
-            <h3 style="font-size: 20px">Ecole</h3>
-        </a>
-        <!-- Menu utilisateur -->
-        <div class="menu">
-            <?php foreach ( $comptes as $compte ): ?>
-            <button class="icone" id="menu">
-                <?php if (!empty($compte['image'])): ?>
-                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                <?php else: ?>
-                    M
-                <?php endif; ?>
-            </button>
-            <?php endforeach; ?>   
-            <div class="menu-name">
-                <h4><?= $_SESSION['username'] ?></h4>
-            </div>
-            <div class="menu-modal">
-                <div class="modal-top">
-                    <div class="tp-image">
-                    <?php foreach ( $comptes as $compte ): ?>
-                        <?php if (!empty($compte['image'])): ?>
-                            <div class="photo">
-                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
-                            </div>
-                            <?php else: ?>
-                                <div class="image">
-                                    M
-                                </div>
-                            <?php endif; ?>
-                       
-                        <?php endforeach; ?>   
-                    </div>
-                    <div class="tp-name">
-                        <h4><?= $_SESSION['username'] ?></h4>
-                    </div>
-                    <div class="tp-compte">
-                        <h4>Compte: <?= $_SESSION['compte'] ?></h4>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <ul class="modal-links">
-                        <li>
-                            <a href="./profile.php">Mon profile</a>
-                        </li>
-                        <li>
-                            <a href="#">Paramètre</a>
-                        </li>
-                        <li>
-                            <a href="./back/responsable/logout.php">Se déconnecter</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <?php require '../includes/navbar.php' ?>
 
         <!-- Conteneur principal -->
     <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">

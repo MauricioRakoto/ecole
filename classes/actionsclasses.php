@@ -57,134 +57,37 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <!-- Métadonnées et liens vers les fichiers CSS -->
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecole</title>
-    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
-    
-    <!-- Style CSS personnalisé -->
-    <style>
-        table th:nth-child(1),
-        table td:nth-child(1) {
-            width: 50px;
-        }
+<?php require '../includes/head.php' ?>
+<style>
+    table th:nth-child(1),
+    table td:nth-child(1) {
+        width: 50px;
+    }
 
-        table th:nth-child(2),
-        table td:nth-child(2),
-        table th:nth-child(3),
-        table td:nth-child(3),
-        table th:nth-child(4),
-        table td:nth-child(4),
-        table th:nth-child(5),
-        table td:nth-child(5) {
-            width: 1%;
-        }
+    table th:nth-child(2),
+    table td:nth-child(2),
+    table th:nth-child(4),
+    table td:nth-child(4),
+    table th:nth-child(5),
+    table td:nth-child(5) {
+        width: 1%;
+    }
 
-        table th:nth-child(6),
-        table td:nth-child(6) {
-            width: 13%;
-        }
+    table th:nth-child(3),
+    table td:nth-child(3) {
+        width: 10%;
+    }
 
-        button.icone {
-            border: 0;
-         }
-
-        button.icone img {
-            width: 30px; 
-            height: 30px; 
-            border-radius: 50%;
-        }
-
-        .photo img {
-            width: 60px; 
-            height: 60px; 
-            border-radius: 50%;
-        }
-
-        button.select {
-        width: 20px;
-        height: 20px;
-        border: 1px solid #000;
-        border-radius: 3px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-        }
-
-        button.select.active {
-            background-color: #007bff;
-        }
-
-    </style>
+    table th:nth-child(6),
+    table td:nth-child(6) {
+        width: 13%;
+    }
 
 
-</head>
+</style>
     <body>
 
-        <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
-        <!-- Logo et nom -->
-        <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-            <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
-            <h3 style="font-size: 20px">Ecole</h3>
-        </a>
-
-        <!-- Menu utilisateur -->
-        <div class="menu">
-            <?php foreach ( $comptes as $compte ): ?>
-            <button class="icone" id="menu" >
-                <?php if (!empty($compte['image'])): ?>
-                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                <?php else: ?>
-                    M
-                <?php endif; ?>
-            </button>
-            <?php endforeach; ?>   
-            <div class="menu-name">
-                <h4><?= $_SESSION['username'] ?></h4>
-            </div>
-            <div class="menu-modal">
-                <div class="modal-top">
-                    <div class="tp-image">
-                    <?php foreach ( $comptes as $compte ): ?>
-                        <?php if (!empty($compte['image'])): ?>
-                            <div class="photo">
-                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
-                            </div>
-                            <?php else: ?>
-                                <div class="image">
-                                    M
-                                </div>
-                            <?php endif; ?>
-                       
-                        <?php endforeach; ?>   
-                    </div>
-                    <div class="tp-name">
-                        <h4><?= $_SESSION['username'] ?></h4>
-                    </div>
-                    <div class="tp-compte">
-                        <h4>Compte: <?= $_SESSION['compte'] ?></h4>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <ul class="modal-links">
-                        <li>
-                            <a href="./profile.php">Mon profile</a>
-                        </li>
-                        <li>
-                            <a href="#">Paramètre</a>
-                        </li>
-                        <li>
-                            <a href="./back/responsable/logout.php">Se déconnecter</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        </nav>
+        <?php require '../includes/navbar.php' ?>
 
         <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
 
@@ -192,41 +95,24 @@
             <div class="sidebar" style="width: 200px; padding: 0 20px;">
             <nav class="navbar bg-light">
                 <div class="navbar-nav w-100" style="margin-top: 25px">
-                    <div class="nav-top">
-                        <div class="nav-l">
-                            <h3>Classe</h3>
-                        </div>
-                        <div class="nav-r">
-                            <a class="df-jc-ac" href="./">X</a>
-                        </div>
-                    </div>
-                    <ul>
-                        <!-- Liens vers les différentes pages liées à la classe -->
+                   
+                <ul>
                         <li>
-                            <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
+                            <a href="../home.php" class="nav-link">Accueil</a>
+                        </li>
+                        <li>
+                            <a href="./" class="nav-link active">Classes</a>
                         </li>
                         <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
                             <li>
-                                <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
+                                <a href="../inscription.php" class="nav-link">Inscription</a>
+                            </li>
+                            <li>
+                                <a href="../matieres/" class="nav-link">Matières</a>
                             </li>
                         <?php endif; ?>
                         <li>
-                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
-                        </li>
-                        <li>
-                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
-                        </li>
-                        <li>
-                            <a href="./notes.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Notes</a>
-                        </li>
-                        <li>
-                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a>
-                        </li>
-                        <li>
-                            <a href="./bulletins.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Bulletins</a>
-                        </li>
-                        <li>
-                            <a href="./supprimer.php?id=<?php echo $id_classe ?>" class="nav-link active">Supprimer</a>
+                            <a href="#" class="nav-link">Bulletins</a>
                         </li>
                     </ul>
                 </div>

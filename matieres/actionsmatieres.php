@@ -22,10 +22,10 @@
     $comptes = $stmt_compte->fetchAll();
 
     // Requête pour récupérer les informations de la classe
-    $sql_classes = "SELECT * FROM classes WHERE classe_id = ? ";
-    $stmt_classes = $pdo->prepare($sql_classes);
-    $stmt_classes->execute([$id_classe]);
-    $classes = $stmt_classes->fetchAll();
+    $sql_matieres = "SELECT * FROM matieres";
+    $stmt_matieres = $pdo->prepare($sql_matieres);
+    $stmt_matieres->execute([]);
+    $matieres = $stmt_matieres->fetchAll();
 
     // Requête pour récupérer les élèves de la classe
     $sql_eleves = "SELECT eleve_id, numero, nom_eleve, prenom_eleve, sexe_eleve FROM eleves WHERE classe_id = ? ORDER BY eleve_id ASC";
@@ -58,9 +58,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php require '../includes/head.php' ?>
+<style>
+    table th:nth-child(1),
+    table td:nth-child(1) {
+        width: 50px;
+    }
+
+    table th:nth-child(2),
+    table td:nth-child(2),
+    table th:nth-child(4),
+    table td:nth-child(4),
+    table th:nth-child(5),
+    table td:nth-child(5) {
+        width: 1%;
+    }
+
+    table th:nth-child(3),
+    table td:nth-child(3) {
+        width: 10%;
+    }
+
+    table th:nth-child(6),
+    table td:nth-child(6) {
+        width: 2%;
+    }
+
+
+</style>
     <body>
 
-        <?php require '../includes/navbar.php' ?>
+    <?php require '../includes/navbar.php' ?>
 
         <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
 
@@ -68,41 +95,23 @@
             <div class="sidebar" style="width: 200px; padding: 0 20px;">
             <nav class="navbar bg-light">
                 <div class="navbar-nav w-100" style="margin-top: 25px">
-                    <div class="nav-top">
-                        <div class="nav-l">
-                            <h3>Classe</h3>
-                        </div>
-                        <div class="nav-r">
-                            <a class="df-jc-ac" href="./">X</a>
-                        </div>
-                    </div>
                     <ul>
-                        <!-- Liens vers les différentes pages liées à la classe -->
                         <li>
-                            <a href="./eleves.php?id=<?php echo $id_classe ?>" class="nav-link">Eleves</a>
+                            <a href="../home.php" class="nav-link">Accueil</a>
+                        </li>
+                        <li>
+                            <a href="./" class="nav-link">Classes</a>
                         </li>
                         <?php if ($_SESSION['compte'] == "Surveillant"):  ?>
                             <li>
-                                <a href="./numbers.php?id=<?php echo $id_classe ?>" class="nav-link">Numéros</a>
+                                <a href="../inscription.php" class="nav-link">Inscription</a>
+                            </li>
+                            <li>
+                                <a href="../matieres/" class="nav-link active">Matières</a>
                             </li>
                         <?php endif; ?>
                         <li>
-                            <a href="./absences.php?id=<?php echo $id_classe ?>" class="nav-link">Absences</a>
-                        </li>
-                        <li>
-                            <a href="./cours.php?id=<?php echo $id_classe ?>" class="nav-link">Cours</a>
-                        </li>
-                        <li>
-                            <a href="./notes.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Notes</a>
-                        </li>
-                        <li>
-                            <a href="./renvoyer.php?id=<?php echo $id_classe ?>" class="nav-link">Renvoyer</a>
-                        </li>
-                        <li>
-                            <a href="./bulletins.php?id=<?php echo $id_classe ?>&s=1" class="nav-link">Bulletins</a>
-                        </li>
-                        <li>
-                            <a href="./supprimer.php?id=<?php echo $id_classe ?>" class="nav-link active">Supprimer</a>
+                            <a href="#" class="nav-link">Bulletins</a>
                         </li>
                     </ul>
                 </div>
@@ -110,71 +119,66 @@
             </div>
 
             <div class="col-right">
-            <?php if (count($classes) > 0):  ?>
+            
                 <div class="tp">
-                    <div class="col-classe-l">
-                        <?php foreach ( $classes as $classe ): ?>
-                            <!-- Informations générales de la classe -->
-                            <h1>Supprimer des Eleves dans la Classe <?php echo $classe['nom_classe'] ?></h1>
-                            <h3>Année Scolaire: <?php echo $classe['annee_debut'] ?> - <?php echo $classe['annee_fin'] ?> </h3>
-                            <h3>Salle: <?php echo $classe['salle'] ?></h3>
-                        <?php endforeach; ?>
+                <div class="add" style="display: flex; gap: 20px">
+                        <a href="./add.php" class="btn-add">Nouveau</a>
+                        <a class="btn-add" href="./actionsmatieres.php">Actions</a>
                     </div>
                 </div>
 
                 <div class="bd">
-                    <?php if (count($eleves) > 0):  ?>
-                        <form action="../back/eleves/deleteEleves.php?id=<?= $id_classe ?>" method="POST" class="d-block w-100 auto">
+                   
+                    <form action="../back/matieres/deleteMatieres.php" method="POST" class="d-block w-100 auto">
                             
-                            <div class="form-top">
+                        <div class="form-top">
                                 <button class="btn btn-primary" type="submit">
                                     <span style="color: blue; margin-right: 10px">0</span>
                                     Supprimer
                                 </button>
-                            </div>
-                        
-                            <table class="table table-hover" style="margin-top: 20px">
+                        </div>
+                    
+                        <table class="table table-hover" style="margin-top: 20px">
                                 <thead>
-                                            <tr>
-                                                <th class="col"></th>
-                                                <th class="col">#</th>
-                                                <th class="col">Matricule</th>
-                                                <th class="col">Nom & Prénom</th>
-                                                <th class="col">Sexe</th>
-                                                <th class="col"></th>
-                                            </tr>
+                                    <tr>
+                                        <th class="col"></th>
+                                        <th class="col">N°</th>
+                                        <th class="col">Matiere</th>
+                                        <th class="col">Coef</th>
+                                        <th class="col">Nombres</th>
+                                        <th class="col"></th>
+                                        <th class="col"></th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                             
-                                            <?php foreach ( $eleves as $eleve ): ?>
-                                                <tr>
-                                                    <th>
-                                                        <button type="button" class="select"></button>
-                                                    </th>
-                                                    <th><?= $eleve['numero'] ?: 0 ?></th>
-                                                    <td><?= $eleve['eleve_id'] ?></td>
-                                                    <td><?= $eleve['nom_eleve'] ?> <?= $eleve['prenom_eleve'] ?></td>
-                                                    <td><?= $eleve['sexe_eleve'] ?></td>
-                                                   
-                                                </tr>
-                                            
-                                            <?php endforeach; ?>
+                                <?php foreach ( $matieres as $matiere ): ?>
+                                    <tr>
+                                        <th>
+                                            <button type="button" class="select"></button>
+                                        </th>
+                                        <td><?= $matiere['matiere_id'] ?></td>
+                                        <td><?= $matiere['nom_matiere'] ?></td>
+                                        <td><?= $matiere['coefficient'] ?></td>
+                                        <td>0</td>
+                                        <td></td>
+                                        <td>
+                                            <a href="./editmatiere.php?id=<?= $matiere['matiere_id'] ?>" class="btn btn-primary">Modifier</a>
+                                        </td>
+                                    </tr>
+                                
+                                <?php endforeach; ?>
                                         
                                 </tbody>
-                            </table>
+                        </table>
                             
-                        </form> 
+                    </form> 
 
-                    <?php else: ?>
-                        <h5>Aucun élève trouvé</h5>
-                    <?php endif; ?>  
+                  
                 </div>
                            
                             
-            <?php else: ?>
-                <!-- Message si aucune classe trouvée -->
-                <h5>Aucun classe trouvé</h5>
-            <?php endif; ?>
+            
             </div>
         </div>
 
@@ -204,12 +208,10 @@
                 const form = document.querySelector('form');
                 let selectedEleves = new Set(); // pour stocker les eleve_id sélectionnés
 
-                console.log(selectedEleves)
-
                 selectButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         const row = button.closest('tr');
-                        const eleveId = row.querySelector('td:nth-child(3)').textContent;
+                        const eleveId = row.querySelector('td:nth-child(2)').textContent;
                     
                         if (button.classList.contains('active')) {
                             button.classList.remove('active');
@@ -227,14 +229,14 @@
                 // Avant la soumission du formulaire, ajouter les eleve_id sélectionnés en input hidden
                 form.addEventListener('submit', function(e) {
                     // Supprimer les anciens inputs si existants
-                    const oldInputs = form.querySelectorAll('input[name="eleves[]"]');
+                    const oldInputs = form.querySelectorAll('input[name="matieres[]"]');
                     oldInputs.forEach(input => input.remove());
                 
                     // Ajouter un input hidden pour chaque eleve_id sélectionné
                     selectedEleves.forEach(id => {
                         const input = document.createElement('input');
                         input.type = 'hidden';
-                        input.name = 'eleves[]';
+                        input.name = 'matieres[]';
                         input.value = id;
                         form.appendChild(input);
                     });
@@ -242,7 +244,7 @@
                     // Si aucun élève sélectionné, empêcher la soumission
                     if (selectedEleves.size === 0) {
                         e.preventDefault();
-                        alert("Veuillez sélectionner au moins un élève à supprimer.");
+                        alert("Veuillez sélectionner au moins un matiere à supprimer.");
                     }
                 });
             });

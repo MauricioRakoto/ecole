@@ -1,12 +1,13 @@
 <?php 
-    // Inclusion du fichier de connexion à la base de données
+    // Connexion à la base de données
     require "../back/database.php";
 
     // Démarrage de la session
     session_start();
 
-    // Vérifie si le responsable est connecté
+    // Vérifie si l'utilisateur (responsable) est connecté
     if (!isset($_SESSION['responsable_id'])) {
+        // Redirige vers la page de connexion si non connecté
         header("Location: signin.php");
         exit();
     }
@@ -14,32 +15,46 @@
     if ($_SESSION['compte'] !== "Surveillant") {
         header("Location: ../home" . ".php");
     }
-    
-    // Récupération des matières 
-    $sql = "SELECT matiere_id, nom_matiere, coefficient FROM matieres";
-    $stmt_matieres = $pdo->query($sql);
-    $matieres = $stmt_matieres->fetchAll();
 
-    // Récupérer un compte
+     // Récupération des classes depuis la base de données
+    $sql = "SELECT classe_id, nom_classe FROM classes";
+    $stmt_classes = $pdo->query($sql);
+    $classes = $stmt_classes->fetchAll();
+
+     // Récupération des matières 
+     $sql = "SELECT matiere_id, nom_matiere, coefficient FROM matieres";
+     $stmt_matieres = $pdo->query($sql);
+     $matieres = $stmt_matieres->fetchAll();
+
+
+      // Récupérer un compte
     $sql_compte = "SELECT image FROM responsable WHERE responsable_id = ?";
     $stmt_compte = $pdo->prepare($sql_compte);
     $stmt_compte->execute([$_SESSION['responsable_id']]);
     $comptes = $stmt_compte->fetchAll();
+
+    // Récupération des classes depuis la base de données
+    $sql_matiere = "SELECT * FROM matieres WHERE matiere_id = ?";
+    $stmt_matiere = $pdo->prepare($sql_matiere);
+    $stmt_matiere->execute([$_GET['id']]);
+    $matiere = $stmt_matiere->fetchAll();
 ?>
 
+<!-- Début du document HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Déclaration de l'encodage des caractères -->
+    <!-- Encodage des caractères -->
     <meta charset="UTF-8">
     <!-- Compatibilité avec Internet Explorer -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Paramétrage pour un affichage responsive sur mobile -->
+    <!-- Configuration du viewport pour mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecole</title>
-    
-    <!-- Inclusion des fichiers CSS nécessaires -->
+    <!-- Titre de la page -->
+    <title>Students</title>
+    <!-- Inclusion du CSS Bootstrap -->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Inclusion du fichier CSS personnalisé -->
     <link href="../assets/css/style.css" rel="stylesheet">
     <style>
         button.icone {
@@ -60,20 +75,61 @@
     </style>
 </head>
 <body>
-    <?php if (isset($_GET['msg'])): ?>
 
-        <p><?= $msg ?></p>
+    <!-- Formulaire modal pour l'ajout de nouvelle classe -->
+    <div class="modal-add">
+        <form action="../back/matieres/updateMatiere.php?id=<?= $_GET['id'] ?>" class="add-content" method="POST" style="height: 250px;">
+            <div class="tp-add">
+                <div class="ttl">
+                    <h1>Modifier un matière</h1>
+                </div>
+                <div class="close">
+                    <a href="./index.php">X</a>
+                </div>
+            </div>
+            <div class="bd-add">
+                <?php if (count($matiere) > 0):  ?>
+                    <?php  foreach ( $matiere as $detail ): ?>
+                        <!-- Champ: nom du matiere -->
+                        <div class="form-group">
+                            <div class="label">
+                                <h4>Nom du classe</h4>
+                            </div>
+                            <div class="input">
+                                <input type="text" name="nom_matiere" placeholder="Nom du classe" value="<?= $detail['nom_matiere'] ?>" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Champ: coefficient -->
+                        <div class="form-group">
+                            <div class="label">
+                                <h4>Coefficient</h4>
+                            </div>
+                            <div class="input">
+                                <input type="number" name="coefficient" placeholder="coefficient" value="<?= $detail['coefficient'] ?>" required>
+                            </div>
+                        </div>
+                    <?php  endforeach; ?>
+                    <!-- Bouton de soumission du formulaire -->
+                    <div class="form-submit">
+                        <button type="submit" name="enregistrer">Terminer</button>
+                    </div>
+                <?php else: ?>
+                    <!-- Message si aucune classe trouvée -->
+                    <h5>Aucun matiere trouvé</h5>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
 
-    <?php endif; ?>
-    <!-- Barre de navigation principale -->
+    <!-- Barre de navigation supérieure -->
     <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
-        <!-- Logo et lien vers la page d'accueil -->
-        <a  href="../home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
+        <!-- Logo et titre -->
+        <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
             <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
             <h3 style="font-size: 20px">Ecole</h3>
         </a>
-
-        <!-- Menu utilisateur avec nom et options -->
+        <!-- Menu utilisateur -->
         <div class="menu">
             <?php foreach ( $comptes as $compte ): ?>
             <button class="icone" id="menu">
@@ -127,31 +183,29 @@
         </div>
     </nav>
 
-    <!-- Conteneur principal avec barre latérale et contenu principal -->
+        <!-- Conteneur principal -->
     <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
-        
-        <!-- Barre latérale de navigation -->
-        <div class="sidebar" style="width: 200px; padding: 0 20px; ">
-            <nav class="navbar bg-light">
-                <div class="navbar-nav w-100" style="margin-top: 25px">
-                    <ul>
-                        <li><a href="../home.php" class="nav-link">Accueil</a></li>
-                        <li><a href="../classes/" class="nav-link">Classes</a></li>
-                        <li><a href="../inscription.php" class="nav-link">Inscription</a></li>
-                        <li><a href="../matieres/" class="nav-link active">Matières</a></li>
-                        <li><a href="#" class="nav-link">Bulletins</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
+    
+    <!-- Barre latérale -->
+    <div class="sidebar" style="width: 200px; padding: 0 20px;">
+        <nav class="navbar bg-light">
+            <div class="navbar-nav w-100" style="margin-top: 25px">
+                <ul>
+                    <li><a href="../home.php" class="nav-link">Accueil</a></li>
+                    <li><a href="../classes" class="nav-link ">Classes</a></li>
+                    <li><a href="./inscription.php" class="nav-link">Inscription</a></li>
+                    <li><a href="./" class="nav-link active">Matières</a></li>
+                    <li><a href="index.php" class="nav-link">Bulletins</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
 
-        <!-- Colonne de droite contenant le contenu dynamique -->
-        <div class="col-right">
+    <div class="col-right">
             <!-- Barre supérieure avec bouton "Nouveau" et formulaire de recherche -->
             <div class="tp">
-                <div class="add" style="display: flex; gap: 20px">
+                <div class="add">
                     <a href="./add.php" class="btn-add">Nouveau</a>
-                    <a class="btn-add" href="./actionsmatieres.php">Actions</a>
                 </div>
                 <div class="search">
                     <form action="">
@@ -190,12 +244,24 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
         </div>
-    </div>
 
-    <!-- Inclusion du fichier JavaScript principal -->
+        <!-- Script pour afficher le modal d'ajout avec animation -->
+        <script>
+        const modalAdd = document.querySelector('.modal-add')
+        const content = document.querySelector('.add-content')
+
+        function showModal () {
+            setTimeout(() => {
+                content.style.opacity = "1"
+            }, 1000)
+        }
+
+        window.addEventListener('load', showModal)
+    </script>
+
+    <!-- Script JS principal -->
     <script src="../assets/js/main.js"></script>
-    
 </body>
 </html>

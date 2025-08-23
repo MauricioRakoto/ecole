@@ -112,150 +112,10 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <!-- Métadonnées et liens vers les fichiers CSS -->
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecole</title>
-    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
-    
-    <!-- Style CSS personnalisé -->
-    <style>
-        table th:nth-child(1),
-        table td:nth-child(1) {
-            width: 50px;
-        }
-
-        table th:nth-child(2),
-        table td:nth-child(2) {
-            width: 1%;
-        }
-
-        .links {
-            display: flex;
-            gap: 10px;
-        }
-
-        a.btn-data {
-            width: 90px;
-            height: 30px;
-            background: #d3cad9;
-            transition: 1s ease-in-out;
-            color: black;
-            font-size: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        a.btn-data:hover {
-            background: #009cff;
-        }
-
-        button.icone {
-            border: 0;
-         }
-
-        button.icone img {
-            width: 30px; 
-            height: 30px; 
-            border-radius: 50%;
-        }
-
-        .photo img {
-            width: 60px; 
-            height: 60px; 
-            border-radius: 50%;
-        }
-
-        .items {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-        }
-
-        .items .card {
-            width: 200px;
-            height: 80px;
-            background: #d3cad9;
-            padding: 10px;
-            border-radius: 5px;
-            transition: .5s ease-in-out;
-            margin-bottom: 10px;
-            z-index: 5;
-            border: 0;
-        }
-    </style>
-    <script>
-        function submitForm() {
-            document.getElementById('classForm').submit();
-        }
-    </script>
-</head>
+<?php require '../includes/head.php' ?>
     <body>
 
-        <nav class="navbar navbar-expand sticky-top" style="display: flex; justify-content: space-between; margin: 0; padding: 10px">
-            <!-- Logo et nom -->
-            <a  href="./home.php" class="text-primary" style="display: flex; gap: 10px; align-items: center">
-                <img src="../assets/img/logo-ecole.png" alt="logo" style="width: 35px">
-                <h3 style="font-size: 20px">Ecole</h3>
-            </a>
-
-            <!-- Menu utilisateur -->
-            <div class="menu">
-                <?php foreach ( $comptes as $compte ): ?>
-                <button class="icone" id="menu">
-                <?php if (!empty($compte['image'])): ?>
-                    <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="25">
-                <?php else: ?>
-                    M
-                <?php endif; ?>
-                </button>
-                <?php endforeach; ?>   
-                <div class="menu-name">
-                    <h4><?= $_SESSION['username'] ?></h4>
-                </div>
-                <div class="menu-modal">
-                <div class="modal-top">
-                    <div class="tp-image">
-                    <?php foreach ( $comptes as $compte ): ?>
-                        <?php if (!empty($compte['image'])): ?>
-                            <div class="photo">
-                                <img src="../assets/img/<?= $compte['image'] ?>" alt="Image" width="35">
-                            </div>
-                            <?php else: ?>
-                                <div class="image">
-                                    M
-                                </div>
-                            <?php endif; ?>
-                       
-                        <?php endforeach; ?>   
-                    </div>
-                    <div class="tp-name">
-                        <h4><?= $_SESSION['username'] ?></h4>
-                    </div>
-                    <div class="tp-compte">
-                        <h4>Compte: <?= $_SESSION['compte'] ?></h4>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <ul class="modal-links">
-                        <li>
-                            <a href="./profile.php">Mon profile</a>
-                        </li>
-                        <li>
-                            <a href="#">Paramètre</a>
-                        </li>
-                        <li>
-                            <a href="../back/responsable/logout.php">Se déconnecter</a>
-                        </li>
-                    </ul>
-                </div>
-                </div>
-            </div>
-        </nav>
+        <?php require '../includes/navbar.php' ?>
 
         <div class="container-xxl position-relative d-flex p-0" style="margin-top: 100px;">
 
@@ -370,8 +230,8 @@
                                 <thead>
                                     <tr>
                                         <th>Rang</th>
-                                        <th>Numéro</th>
-                                        <th>Nom</th>
+                                        <th>Matricule</th>
+                                        <th>Nom & Prénom</th>
                                         <th>Sexe</th>
                                         <th>Moyenne</th>
                                         <th></th>
@@ -400,70 +260,89 @@
                         // Récupérer id et s dans l'URL
                         const id = getParameterByName('id');
                         const s = getParameterByName('s');
+
+                        // Si 's' est défini, gérer la classe active
+                        if (s) {
+                          // Sélectionner tous les liens de session d'examen
+                          const links = document.querySelectorAll('.periodes-links a');
+                        
+                          links.forEach(link => {
+                            // Extraire la valeur du paramètre s dans le href du lien
+                            const urlParams = new URLSearchParams(link.search);
+                            const sValue = urlParams.get('s');
+                        
+                            // Ajouter ou retirer la classe "active"
+                            if (sValue === s) {
+                              link.classList.add('active');
+                            } else {
+                              link.classList.remove('active');
+                            }
+                          });
+                        }
                     
                         function afficherNote(data) {
-// Pour chaque élève
-    data.forEach(eleve => {
-        let sommeTotaux = 0;
-        let totalCoef = 0;
-        let nombreMatieres = eleve.matieres.length; // nombre de matières de cet élève
+                            // Pour chaque élève
+                            data.forEach(eleve => {
+                                let sommeTotaux = 0;
+                                let totalCoef = 0;
+                                let nombreMatieres = eleve.matieres.length; // nombre de matières de cet élève
+                            
+                                eleve.matieres.forEach(note => {
+                                    let coef = parseFloat(note.coefficient) || 0;
+                                    totalCoef += coef;
+                                
+                                    let ds1 = parseFloat(note.ds1) || 0;
+                                    let ds2 = parseFloat(note.ds2) || 0;
+                                    let exam = parseFloat(note.exam) || 0;
+                                
+                                    // Calcul DS total (moyenne des DS)
+                                    let dsTotal = (ds1 + ds2) / 2;
+                                
+                                    // Pondération par coefficient
+                                    let dsTotalCof = dsTotal * coef;
+                                    let examCof = exam * coef;
+                                
+                                    // Total matière (comme ton modèle)
+                                    let totalNoteMat = (dsTotalCof + examCof) / 3;
+                                    totalNoteMat = Math.round(totalNoteMat);
+                                
+                                    sommeTotaux += totalNoteMat;
+                                });
+                            
+                                // Moyenne générale
+                                eleve.moyenneGenerale = nombreMatieres > 0 ? (sommeTotaux / nombreMatieres).toFixed(2) : 0;
+                            });
+                            
+                            // Tri décroissant par moyenne générale
+                            data.sort((a, b) => b.moyenneGenerale - a.moyenneGenerale);
+                        
+                            // Affichage dans le tableau
+                            let tbody = document.querySelector("#table-eleves tbody");
+                            tbody.innerHTML = "";
+                        
+                            data.forEach((e, index) => {
+                                let row = document.createElement("tr");
+                                row.innerHTML = `
+                                    <td>${index + 1}</td>
+                                    <td>${e.numero}</td>
+                                    <td>${e.nom_eleve} ${e.prenom_eleve}</td>
+                                    <td>${e.sexe_eleve}</td>
+                                    <td>${e.moyenneGenerale}</td>
+                                    <td>
+                                        <a class="btn btn-primary" href='./bulletin.php?id=${e.classe_id}&ide=${e.eleve_id}&s=${s}&r=${index + 1}'>Voir</a>
+                                    </td>
+                                `;
+                                tbody.appendChild(row);
+                            });
+                        }
 
-        eleve.matieres.forEach(note => {
-            let coef = parseFloat(note.coefficient) || 0;
-            totalCoef += coef;
-
-            let ds1 = parseFloat(note.ds1) || 0;
-            let ds2 = parseFloat(note.ds2) || 0;
-            let exam = parseFloat(note.exam) || 0;
-
-            // Calcul DS total (moyenne des DS)
-            let dsTotal = (ds1 + ds2) / 2;
-
-            // Pondération par coefficient
-            let dsTotalCof = dsTotal * coef;
-            let examCof = exam * coef;
-
-            // Total matière (comme ton modèle)
-            let totalNoteMat = (dsTotalCof + examCof) / 3;
-            totalNoteMat = Math.round(totalNoteMat);
-
-            sommeTotaux += totalNoteMat;
-        });
-
-        // Moyenne générale
-        eleve.moyenneGenerale = nombreMatieres > 0 ? (sommeTotaux / nombreMatieres).toFixed(2) : 0;
-    });
-
-    // Tri décroissant par moyenne générale
-    data.sort((a, b) => b.moyenneGenerale - a.moyenneGenerale);
-
-    // Affichage dans le tableau
-    let tbody = document.querySelector("#table-eleves tbody");
-    tbody.innerHTML = "";
-
-    data.forEach((e, index) => {
-        let row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${e.numero}</td>
-            <td>${e.nom_eleve} ${e.prenom_eleve}</td>
-            <td>${e.sexe_eleve}</td>
-            <td>${e.moyenneGenerale}</td>
-            <td>
-                <a class="btn btn-primary" href='./bulletin.php?id=${e.classe_id}&ide=${e.eleve_id}&s=${s}&r=${index + 1}'>Voir</a>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-if (id && s) {
-    fetch(`get_notes.php?id=${id}&s=${s}`)
-        .then(res => res.json())
-        .then(data => afficherNote(data))
-        .catch(err => console.error("Erreur AJAX:", err));
-}
-                        </script>
+                        if (id && s) {
+                            fetch(`get_notes.php?id=${id}&s=${s}`)
+                                .then(res => res.json())
+                                .then(data => afficherNote(data))
+                                .catch(err => console.error("Erreur AJAX:", err));
+                        }
+                    </script>
 
                            
                             <!-- Bouton pour imprimer la liste de la classe -->
@@ -519,29 +398,7 @@ if (id && s) {
 
     
 
-    <script>
-        document.querySelectorAll('.periodes-links a').forEach(link => {
-            
-        link.addEventListener('click', e => {
-            e.preventDefault();
-
-            // Retirer la classe active de tous les liens et la remettre sur celui cliqué
-            document.querySelectorAll('.periodes-links a').forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-
-            // Extraire la session du href
-            const urlParams = new URLSearchParams(link.search);
-            const sValue = urlParams.get('s') || 1;
-
-            // Charger les notes pour la session choisie
-            loadNotes(idClasse, sValue);
-
-            // Optionnel : modifier l'URL sans recharger (history API)
-            history.replaceState(null, '', `?id=${idClasse}&s=${sValue}`);
-        });
-    });
-
-    </script>
+    
 
     </body>
 </html>
