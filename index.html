@@ -294,44 +294,58 @@
     }
     
     .carousel-images {
-        position: relative;
         display: flex;
         transform-style: preserve-3d;
         transition: transform 2s ease;
     }
 
-    .btns {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        display: flex;
-        width: 100%;
-    }
 
-    .btns button.btn-left,
-    .btns button.btn-right {
-        width: 30px;
-        height: 30px;
-        background: none;
-        border: 0;
-        color: #000;
-        font-size: 20px;
-    }
-
-    .btns button.btn-left {
-        position: absolute;
-        left: -50px;
-    }
-
-    .btns button.btn-right {
-        position: absolute;
-        left: 100%;
-    }
     
     .image {
         min-width: 100%;
         backface-visibility: hidden; /* pour éviter le "flash" en 3D */
     }
+
+    .carousel-btns {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        display: flex;
+        width: 100%;
+       
+    }
+
+    .carousel-control.prev,
+    .carousel-control.next {
+        border: none;
+        color: #000;
+        font-size: 18px;
+        padding: 10px 15px;
+        cursor: pointer;
+        background: none;
+        width: 25px;
+        height: 25px;
+        transition: 1s ease-in-out;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .carousel-control.prev:hover,
+    .carousel-control.next:hover {
+        background: #629ec5;
+    }
+
+.carousel-control.prev {
+    position: absolute;
+    left: 20px;
+}
+
+.carousel-control.next {
+    position: absolute;
+    right: 20px;
+}
 
 
 
@@ -402,30 +416,37 @@
     </div>
 
     <div class="row g-0 carousel-container" style="margin-top: 220px; margin-left:auto; margin-right:auto; position: relative;">
-        <div class="carousel-images">
-           
-            <div class="image" data-index="0">
-                <img src="./assets/img/bulletins.png" alt="">
-            </div>
-            <div class="image " data-index="1">
-                <img src="./assets/img/bulletin.png" alt="">
-            </div>
-            <div class="image" data-index="2">
-                <img src="./assets/img/absences.png" alt="">
-            </div>
-            <div class="image" data-index="3">
-                <img src="./assets/img/renvoyer.png" alt="">
-            </div>
+    <div class="carousel-images">
+        <div class="image" data-index="0">
+            <img src="./assets/img/bulletins.png" alt="">
         </div>
-
-        <div class="carousel-buttons">
-            <button class="btn" data-index="0"></button>
-            <button class="btn" data-index="1"></button>
-            <button class="btn" data-index="2"></button>
-            <button class="btn" data-index="3"></button>
+        <div class="image" data-index="1">
+            <img src="./assets/img/bulletin.png" alt="">
         </div>
-
+        <div class="image" data-index="2">
+            <img src="./assets/img/absences.png" alt="">
+        </div>
+        <div class="image" data-index="3">
+            <img src="./assets/img/renvoyer.png" alt="">
+        </div>
     </div>
+
+    <div class="carousel-btns">
+        <button class="carousel-control prev">❮</button>
+        <button class="carousel-control next">❯</button>
+    </div>
+
+    <!-- Boutons navigation -->
+    
+
+    <div class="carousel-buttons">
+        <button class="btn" data-index="0"></button>
+        <button class="btn" data-index="1"></button>
+        <button class="btn" data-index="2"></button>
+        <button class="btn" data-index="3"></button>
+    </div>
+</div>
+
 
     <main class="features-container" style="margin-top: 100px;">
         <div class="title">
@@ -485,38 +506,48 @@
 
    <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const images = document.querySelectorAll(".carousel-images .image");
-            const buttons = document.querySelectorAll(".carousel-buttons .btn");
-            let currentIndex = 0;
-            const slideCount = images.length;
-            const distanceZ = 100; // distance en Z pour donner de la profondeur
+    const images = document.querySelectorAll(".carousel-images .image");
+    const buttons = document.querySelectorAll(".carousel-buttons .btn");
+    const prevBtn = document.querySelector(".carousel-control.prev");
+    const nextBtn = document.querySelector(".carousel-control.next");
 
-            function showImage(index) {
-                const offset = -index * 100; // translateX %
-                images.forEach((img, i) => {
-                    const z = (i === index ? 0 : -distanceZ); // l'image active est en Z=0
-                    img.style.transform = `translateX(${offset}%) translateZ(${z}px)`;
-                });
+    let currentIndex = 0;
+    const slideCount = images.length;
 
-                buttons.forEach((btn, i) => btn.classList.toggle("active", i === index));
-                currentIndex = index;
-            }
+    function showImage(index) {
+        const offset = -index * 100; 
+        document.querySelector(".carousel-images").style.transform = `translateX(${offset}%)`;
+        buttons.forEach((btn, i) => btn.classList.toggle("active", i === index));
+        currentIndex = index;
+    }
 
-            buttons.forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const index = parseInt(btn.getAttribute("data-index"));
-                    showImage(index);
-                });
-            });
+    // Navigation par boutons
+    prevBtn.addEventListener("click", () => {
+        let newIndex = (currentIndex - 1 + slideCount) % slideCount;
+        showImage(newIndex);
+    });
 
-            // Auto-slide
-            setInterval(() => {
-                let nextIndex = (currentIndex + 1) % slideCount;
-                showImage(nextIndex);
-            }, 4000);
+    nextBtn.addEventListener("click", () => {
+        let newIndex = (currentIndex + 1) % slideCount;
+        showImage(newIndex);
+    });
 
-            showImage(0);
+    // Navigation par petits boutons
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const index = parseInt(btn.getAttribute("data-index"));
+            showImage(index);
         });
+    });
+
+    // Auto défilement (facultatif)
+    setInterval(() => {
+        let nextIndex = (currentIndex + 1) % slideCount;
+        showImage(nextIndex);
+    }, 5000);
+
+    showImage(0);
+});
 
    </script>
 
